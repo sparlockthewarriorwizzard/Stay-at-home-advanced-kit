@@ -22,7 +22,7 @@ It is specifically optimized for an **AI-First Workflow**. The folder structure 
 
 1. **Clone the repo**
    ```bash
-   git clone https://github.com/yourusername/react-native-ai-mvp-starter.git
+   git clone https://github.com/sparlockthewarriorwizzard/react-native-ai-mvp-starter.git
    cd react-native-ai-mvp-starter
    ```
 
