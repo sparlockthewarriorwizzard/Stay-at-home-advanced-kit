@@ -4,10 +4,16 @@ import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 
 // Screens
+// Screens
 import PaywallScreen from '../screens/PaywallScreen';
 
+// @AI-NOTE: REGISTER NEW SCREENS HERE
+// 1. Import the screen component.
+// 2. Add it to the Stack or Tab Navigator below.
+// 3. Define the param type in RootStackParamList.
+
 // Placeholders for your actual app screens (AI can replace these easily)
-const HomeScreen = () => <></>; 
+const HomeScreen = () => <></>;
 const SettingsScreen = () => <></>;
 
 // --------------------------------------------------------
@@ -51,16 +57,16 @@ export default function RootNavigator() {
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
-        
+
         {/* The Main App (Tabs) */}
         <Stack.Screen name="MainTabs" component={MainTabs} />
 
         {/* The Paywall (Modal) 
             presentation: 'modal' makes it slide up from the bottom on iOS
         */}
-        <Stack.Screen 
-          name="Paywall" 
-          component={PaywallScreen} 
+        <Stack.Screen
+          name="Paywall"
+          component={PaywallScreen}
           options={{ presentation: 'modal' }}
         />
 
