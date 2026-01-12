@@ -14,7 +14,7 @@
 - [x] Task: Update `AffirmationRecorder.tsx` UI to reflect the new state management from the refactored hook. (483f8ff)
 - [ ] Task: Conductor - User Manual Verification 'Affirmation Module Integration & Refactor' (Protocol in workflow.md)
 
-## Phase 3: Navigation & Integration
+## Phase 3: Navigation ## Phase 3: Navigation & Integration Integration [checkpoint: 629db59]
 - [x] Task: Create a new screen `src/screens/AffirmationRecordScreen.tsx` wrapping the `AffirmationRecorder`. (869a426)
 - [x] Task: Register `AffirmationRecordScreen` in `src/navigation/RootNavigator.tsx`. (6fcc23d)
 - [x] Task: Add a temporary navigation button on `HomeScreen` to access the recorder. (aa3212a)
