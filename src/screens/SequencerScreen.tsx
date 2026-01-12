@@ -4,10 +4,12 @@ import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { SequencerGrid } from '../modules/sequencer/SequencerGrid';
 import { InstrumentSelector } from '../modules/sequencer/InstrumentSelector';
+import { KitSelector } from '../modules/sequencer/KitSelector';
 import { useSequencerClock } from '../modules/sequencer/useSequencerClock';
 import { AudioEngine } from '../modules/sequencer/AudioEngine';
 import { SoundKitService } from '../services/SoundKitService';
 import { Ionicons } from '@expo/vector-icons';
+import { SoundKit } from '../types/MusicTypes';
 
 type SequencerScreenRouteProp = RouteProp<RootStackParamList, 'Sequencer'>;
 
@@ -21,7 +23,7 @@ const SequencerScreen: React.FC = () => {
   const [steps, setSteps] = useState<Record<string, boolean[]>>({});
   const [activeInstrumentId, setActiveInstrumentId] = useState<string>(audioUri);
   const [isEngineReady, setIsEngineReady] = useState(false);
-  const [activeKit] = useState(SoundKitService.getDefaultKit());
+  const [activeKit, setActiveKit] = useState<SoundKit>(SoundKitService.getDefaultKit());
 
   // Initialize Audio Engine & Kit
   useEffect(() => {
@@ -36,15 +38,21 @@ const SequencerScreen: React.FC = () => {
         await engine.loadKit(activeKit);
 
         // 3. Initialize Steps for all instruments
-        const initialSteps: Record<string, boolean[]> = {};
-        // Voice
-        initialSteps[audioUri] = new Array(16).fill(false);
-        // Kit Instruments
-        activeKit.instruments.forEach(inst => {
-            initialSteps[inst.id] = new Array(16).fill(false);
+        setSteps(prev => {
+            const newSteps = { ...prev };
+            // Ensure voice track exists
+            if (!newSteps[audioUri]) {
+                newSteps[audioUri] = new Array(16).fill(false);
+            }
+            // Ensure kit instruments exist
+            activeKit.instruments.forEach(inst => {
+                if (!newSteps[inst.id]) {
+                    newSteps[inst.id] = new Array(16).fill(false);
+                }
+            });
+            return newSteps;
         });
 
-        setSteps(initialSteps);
         setIsEngineReady(true);
       } catch (error) {
         console.error('Failed to load audio in sequencer:', error);
@@ -52,11 +60,22 @@ const SequencerScreen: React.FC = () => {
     };
 
     setupEngine();
-
-    return () => {
-        AudioEngine.getInstance().unloadAll();
-    };
+    // We don't unload on kit change, just keep adding sounds for now (or optimize later)
   }, [audioUri, activeKit]);
+
+  // Handle Kit Change
+  const handleKitChange = (kit: SoundKit) => {
+      setActiveKit(kit);
+      // Reset active instrument if it was from the old kit
+      if (activeInstrumentId !== audioUri) {
+          // Default to first instrument of new kit
+          if (kit.instruments.length > 0) {
+              setActiveInstrumentId(kit.instruments[0].id);
+          } else {
+              setActiveInstrumentId(audioUri);
+          }
+      }
+  };
 
   // Handle step trigger (Audio Engine side)
   const onStepTrigger = useCallback((stepIndex: number) => {
@@ -84,6 +103,13 @@ const SequencerScreen: React.FC = () => {
     }));
   };
 
+  // Helper to get active track name
+  const getActiveTrackName = () => {
+      if (activeInstrumentId === audioUri) {return 'My Voice';}
+      const inst = activeKit.instruments.find(i => i.id === activeInstrumentId);
+      return inst ? inst.name : 'Unknown';
+  };
+
   if (!isEngineReady) {
     return (
       <View style={styles.loadingContainer}>
@@ -93,20 +119,17 @@ const SequencerScreen: React.FC = () => {
     );
   }
 
-  // Helper to get active track name
-  const getActiveTrackName = () => {
-      if (activeInstrumentId === audioUri) {return 'My Voice';}
-      const inst = activeKit.instruments.find(i => i.id === activeInstrumentId);
-      return inst ? inst.name : 'Unknown';
-  };
-
   return (
     <SafeAreaView style={styles.container}>
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#fff" />
         </TouchableOpacity>
-        <Text style={styles.title}>Sequencer</Text>
+        <KitSelector
+            currentKit={activeKit}
+            kits={SoundKitService.getKits()}
+            onSelectKit={handleKitChange}
+        />
         <View style={{ width: 28 }} />
       </View>
 

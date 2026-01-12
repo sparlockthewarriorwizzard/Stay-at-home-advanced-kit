@@ -19,6 +19,6 @@
 - [x] Task: Conductor - User Manual Verification 'Multi-Track State - [ ] Task: Conductor - User Manual Verification 'Multi-Track State & UI' UI' (Protocol in workflow.md)
 
 ## Phase 4: Polish & Integration
-- [ ] Task: Add "Kit Selector" UI to `SequencerScreen`.
+- [~] Task: Add "Kit Selector" UI to `SequencerScreen`.
 - [ ] Task: Verify timing and performance with multiple sounds triggering on the same step.
 - [ ] Task: Conductor - User Manual Verification 'Polish & Integration' (Protocol in workflow.md)
