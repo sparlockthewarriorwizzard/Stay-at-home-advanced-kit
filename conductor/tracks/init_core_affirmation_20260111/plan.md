@@ -17,7 +17,7 @@
 ## Phase 3: Navigation & Integration
 - [x] Task: Create a new screen `src/screens/AffirmationRecordScreen.tsx` wrapping the `AffirmationRecorder`. (869a426)
 - [x] Task: Register `AffirmationRecordScreen` in `src/navigation/RootNavigator.tsx`. (6fcc23d)
-- [ ] Task: Add a temporary navigation button on `HomeScreen` to access the recorder.
+- [x] Task: Add a temporary navigation button on `HomeScreen` to access the recorder. (aa3212a)
 - [ ] Task: Conductor - User Manual Verification 'Navigation & Integration' (Protocol in workflow.md)
 
 ## Phase 4: Verification & Cleanup
