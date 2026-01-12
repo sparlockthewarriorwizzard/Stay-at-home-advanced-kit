@@ -21,7 +21,7 @@
 - [ ] Task: Conductor - User Manual Verification 'Navigation & Integration' (Protocol in workflow.md)
 
 ## Phase 4: Verification & Cleanup
-- [ ] Task: Test the full flow: Navigate -> Record -> Stop -> Playback.
+- [x] Task: Test the full flow: Navigate -> Record -> Stop -> Playback. (e63ca75)
 - [ ] Task: Verify audio file upload logic in `AffirmationService.ts` (mock if backend not ready).
 - [ ] Task: Clean up `extracted_modules` and `Stay-at-home-advanced-kit` folders (delete if empty/merged).
 - [ ] Task: Conductor - User Manual Verification 'Verification & Cleanup' (Protocol in workflow.md)
