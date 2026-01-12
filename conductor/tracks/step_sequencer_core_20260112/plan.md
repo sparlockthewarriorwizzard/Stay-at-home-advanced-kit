@@ -9,8 +9,8 @@
 ## Phase 2: Grid UI Component
 - [x] Task: Create `src/modules/sequencer/SequencerGrid.tsx` - a visual component rendering 16 steps. (ea377ad)
 - [x] Task: Implement "toggle" logic for steps (active/inactive state). (merged)
-- [ ] Task: Add "Playhead" visual state (highlighting the current step as the clock ticks).
-- [ ] Task: Style the grid with the "Dark Futuristic Neon" aesthetic.
+- [x] Task: Add "Playhead" visual state (highlighting the current step as the clock ticks). (b9f4909)
+- [x] Task: Style the grid with the "Dark Futuristic Neon" aesthetic. (merged)
 - [ ] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Sample Triggering
