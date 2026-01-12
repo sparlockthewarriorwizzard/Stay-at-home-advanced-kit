@@ -20,10 +20,9 @@ export class AudioEngine {
 
     try {
       // In expo-audio, we create a player with the source.
-      // We assume the constructor is available as 'new AudioPlayer(source)'
-      // If not, we might need a factory from the module, but based on types it looks like a class.
-      const player = new AudioPlayer(uri);
-      
+      // updateInterval is set to 100ms by default in the hook, we'll match that.
+      const player = new AudioPlayer(uri, 100);
+
       // Wait for it to load? expo-audio players might auto-load or have a loading state.
       // We'll store it immediately.
       this.players.set(uri, player);
@@ -37,7 +36,7 @@ export class AudioEngine {
     const player = this.players.get(uri);
     if (player) {
       try {
-        // Reset to start if needed, or just play. 
+        // Reset to start if needed, or just play.
         // For a sequencer, we usually want re-triggering.
         // If it's already playing, we might need to seek to 0.
         if (player.playing) {

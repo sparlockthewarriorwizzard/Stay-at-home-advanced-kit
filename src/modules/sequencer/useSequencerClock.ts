@@ -27,7 +27,7 @@ export const useSequencerClock = ({
 }: UseSequencerClockProps): SequencerClock => {
   const [currentStep, setCurrentStep] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
-  
+
   // Refs for timing to avoid re-renders causing drift
   const nextNoteTimeRef = useRef<number>(0);
   const currentStepRef = useRef<number>(0);
@@ -38,10 +38,10 @@ export const useSequencerClock = ({
   const nextNote = useCallback(() => {
     const secondsPerStep = bpmToSecondsPerStep(bpm);
     nextNoteTimeRef.current += secondsPerStep;
-    
+
     // Advance step
     currentStepRef.current = (currentStepRef.current + 1) % steps;
-    
+
     setCurrentStep(currentStepRef.current);
     if (onStep) {
         onStep(currentStepRef.current);
@@ -52,7 +52,7 @@ export const useSequencerClock = ({
     // while there are notes that will need to play before the next interval,
     // schedule them and advance the pointer.
     const currentTime = Date.now() / 1000;
-    
+
     // If we're too far behind, reset
     if (nextNoteTimeRef.current < currentTime - 0.2) {
         nextNoteTimeRef.current = currentTime;
@@ -61,19 +61,19 @@ export const useSequencerClock = ({
     while (nextNoteTimeRef.current < currentTime + scheduleAheadTime) {
       nextNote();
     }
-    
+
     if (isPlaying) {
         timerIdRef.current = setTimeout(scheduler, lookahead);
     }
   }, [isPlaying, nextNote, scheduleAheadTime]);
 
   const start = useCallback(() => {
-    if (isPlaying) return;
-    
+    if (isPlaying) {return;}
+
     // Initialize timing
     currentStepRef.current = -1; // Start before 0 so first step is 0
     nextNoteTimeRef.current = Date.now() / 1000;
-    
+
     setIsPlaying(true);
     timerIdRef.current = setTimeout(() => {
         scheduler();

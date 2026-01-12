@@ -18,7 +18,7 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
     <View style={styles.gridContainer}>
       {steps.map((isActive, index) => {
         const isCurrent = index === currentStep;
-        
+
         return (
           <TouchableOpacity
             key={index}
@@ -34,7 +34,7 @@ export const SequencerGrid: React.FC<SequencerGridProps> = ({
             <Text style={[
                 styles.stepText,
                 isActive && { color: '#000' },
-                isCurrent && !isActive && { color: accentColor }
+                isCurrent && !isActive && { color: accentColor },
             ]}>
               {index + 1}
             </Text>

@@ -6,7 +6,7 @@ import { AffirmationService } from './AffirmationService';
 
 interface AffirmationRecorderProps {
     service: AffirmationService;
-    onSuccess?: () => void;
+    onSuccess?: (audioUri: string) => void;
     // Optional style overrides
     primaryColor?: string;
     secondaryColor?: string;

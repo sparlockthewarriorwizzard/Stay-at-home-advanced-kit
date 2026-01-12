@@ -10,18 +10,15 @@ const affirmationService = new AffirmationService('https://your-api-url.com');
 const AffirmationRecordScreen: React.FC = () => {
   const navigation = useNavigation();
 
-  const handleSuccess = () => {
-    // Navigate to the next part of the flow (Step Sequencer) once implemented
-    // For now, we'll just go back or show a message
-    Alert.alert('Success', 'Recording saved! Ready for the sequencer.', [
-      { text: 'OK', onPress: () => navigation.goBack() },
-    ]);
+  const handleSuccess = (audioUri: string) => {
+    // Navigate to the next part of the flow (Step Sequencer)
+    navigation.navigate('Sequencer', { audioUri });
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <AffirmationRecorder
-        service={affirmationService}
+      <AffirmationRecorder 
+        service={affirmationService} 
         onSuccess={handleSuccess}
       />
     </SafeAreaView>

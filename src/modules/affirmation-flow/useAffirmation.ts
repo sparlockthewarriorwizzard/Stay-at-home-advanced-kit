@@ -12,7 +12,7 @@ import { AffirmationService, AIResponse } from './AffirmationService';
 
 interface UseAffirmationProps {
   service: AffirmationService;
-  onSuccess?: () => void;
+  onSuccess?: (audioUri: string) => void;
 }
 
 export const useAffirmation = ({ service, onSuccess }: UseAffirmationProps) => {
@@ -102,7 +102,7 @@ export const useAffirmation = ({ service, onSuccess }: UseAffirmationProps) => {
       await service.saveAudioToGoal(aiResponse.goalId, objectPath);
 
       if (onSuccess) {
-        onSuccess();
+        onSuccess(audioUri);
       } else {
         Alert.alert('Success', 'Goal and affirmation saved!');
       }
