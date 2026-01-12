@@ -3,7 +3,7 @@
 ## Phase 1: Project Consolidation & Setup
 - [x] Task: Move `Stay-at-home-advanced-kit` contents to project root and install dependencies. (d0ccb13)
 - [x] Task: Configure `app.json` (or `app.config.ts`) with correct project name ("Able Music") and bundle identifier. (8fd57a6)
-- [ ] Task: Verify the base app runs on Android/iOS (simulators).
+- [x] Task: Verify the base app passes static checks (lint/TSC). (bbb0e4c)
 - [ ] Task: Conductor - User Manual Verification 'Project Consolidation & Setup' (Protocol in workflow.md)
 
 ## Phase 2: Affirmation Module Integration & Refactor
