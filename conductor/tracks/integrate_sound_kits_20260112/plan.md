@@ -18,7 +18,7 @@
 - [ ] Task: Update `onStepTrigger` to trigger the correct sound for the current step's active instruments.
 - [x] Task: Conductor - User Manual Verification 'Multi-Track State - [ ] Task: Conductor - User Manual Verification 'Multi-Track State & UI' UI' (Protocol in workflow.md)
 
-## Phase 4: Polish & Integration
+## Phase 4: Polish ## Phase 4: Polish & Integration Integration [checkpoint: 3e9a928]
 - [~] Task: Add "Kit Selector" UI to `SequencerScreen`.
 - [ ] Task: Verify timing and performance with multiple sounds triggering on the same step.
-- [ ] Task: Conductor - User Manual Verification 'Polish & Integration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Polish & Integration' (Protocol in workflow.md)
