@@ -2,7 +2,7 @@
 
 ## Phase 1: Project Consolidation & Setup
 - [x] Task: Move `Stay-at-home-advanced-kit` contents to project root and install dependencies. (d0ccb13)
-- [ ] Task: Configure `app.json` (or `app.config.ts`) with correct project name ("Able Music") and bundle identifier.
+- [x] Task: Configure `app.json` (or `app.config.ts`) with correct project name ("Able Music") and bundle identifier. (8fd57a6)
 - [ ] Task: Verify the base app runs on Android/iOS (simulators).
 - [ ] Task: Conductor - User Manual Verification 'Project Consolidation & Setup' (Protocol in workflow.md)
 
