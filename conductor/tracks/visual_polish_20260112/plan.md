@@ -1,0 +1,17 @@
+# Track Plan: Visual Polish & Animations
+
+## Phase 1: Animation Setup & Configuration
+- [x] Task: Check and configure `react-native-reanimated` (install if missing, update `babel.config.js`). (9022ea8)
+- [x] Task: Create a reusable `NeonButton` component with animated glow/pulse effects. (9022ea8)
+- [ ] Task: Conductor - User Manual Verification 'Animation Setup & Configuration' (Protocol in workflow.md)
+
+## Phase 2: Sequencer Grid Animations
+- [ ] Task: Refactor `SequencerGrid` to use `Animated.View` (or Reanimated) for step cells.
+- [ ] Task: Implement "Playhead" animation: The current step should highlight smoothly.
+- [ ] Task: Implement "Trigger" animation: Active steps should flash or scale when hit by the playhead.
+- [ ] Task: Conductor - User Manual Verification 'Sequencer Grid Animations' (Protocol in workflow.md)
+
+## Phase 3: Global UI Polish
+- [ ] Task: Update `SequencerScreen` controls (Play/Stop, BPM) to use the new `NeonButton` style.
+- [ ] Task: Apply "Dark Futuristic" background gradients or subtle textures if applicable (using `expo-linear-gradient` if available, or simple styles).
+- [ ] Task: Conductor - User Manual Verification 'Global UI Polish' (Protocol in workflow.md)
