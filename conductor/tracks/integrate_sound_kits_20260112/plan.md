@@ -6,11 +6,11 @@
 - [x] Task: Create a `SoundKitService` to manage available kits and their asset paths. (merged)
 - [ ] Task: Conductor - User Manual Verification 'Asset Preparation & Data Structure' (Protocol in workflow.md)
 
-## Phase 2: Audio Engine Polyphony
+## Phase 2: Audio Engine Polyphony [checkpoint: 98048e4]
 - [x] Task: Refactor `AudioEngine` to support multiple simultaneous players (one per instrument). (429880c)
 - [x] Task: Add `loadKit(kit: SoundKit)` method to `AudioEngine` to preload all sounds in a kit. (44a9a86)
 - [x] Task: Update `playSound` to accept an `instrumentId` in addition to (or instead of) a URI. (merged)
-- [ ] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
 
 ## Phase 3: Multi-Track State & UI
 - [ ] Task: Refactor `SequencerScreen` state to hold a 2D array (or map) of steps: `steps[instrumentId][stepIndex]`.
