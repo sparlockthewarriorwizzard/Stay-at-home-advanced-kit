@@ -1,9 +1,9 @@
 # Track Plan: Visual Polish & Animations
 
-## Phase 1: Animation Setup & Configuration
+## Phase 1: Animation Setup & Configuration [checkpoint: 9278c44]
 - [x] Task: Check and configure `react-native-reanimated` (install if missing, update `babel.config.js`). (9022ea8)
 - [x] Task: Create a reusable `NeonButton` component with animated glow/pulse effects. (9022ea8)
-- [ ] Task: Conductor - User Manual Verification 'Animation Setup & Configuration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Animation Setup - [ ] Task: Conductor - User Manual Verification 'Animation Setup & Configuration' Configuration' (Protocol in workflow.md)
 
 ## Phase 2: Sequencer Grid Animations
 - [ ] Task: Refactor `SequencerGrid` to use `Animated.View` (or Reanimated) for step cells.
