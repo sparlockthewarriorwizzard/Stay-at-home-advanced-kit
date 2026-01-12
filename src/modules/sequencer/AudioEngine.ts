@@ -1,5 +1,5 @@
 import { AudioPlayer } from 'expo-audio';
-import { Instrument } from '../../types/MusicTypes';
+import { Instrument, SoundKit } from '../../types/MusicTypes';
 
 export class AudioEngine {
   private static instance: AudioEngine;
@@ -12,6 +12,14 @@ export class AudioEngine {
       AudioEngine.instance = new AudioEngine();
     }
     return AudioEngine.instance;
+  }
+
+  /**
+   * Preloads all instruments in a sound kit.
+   */
+  public async loadKit(kit: SoundKit): Promise<void> {
+    const promises = kit.instruments.map(inst => this.loadInstrument(inst));
+    await Promise.all(promises);
   }
 
   /**
