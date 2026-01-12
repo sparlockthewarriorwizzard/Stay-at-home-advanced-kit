@@ -21,6 +21,6 @@
 - [x] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
 
 ## Phase 4: Polish & Performance Tuning
-- [ ] Task: Test rhythm stability on device (or best effort).
+- [x] Task: Test rhythm stability on device (or best effort). (b4cf1d9)
 - [ ] Task: Optimize audio loading (ensure `prepareToPlayAsync` is called).
 - [ ] Task: Conductor - User Manual Verification 'Polish & Performance Tuning' (Protocol in workflow.md)
