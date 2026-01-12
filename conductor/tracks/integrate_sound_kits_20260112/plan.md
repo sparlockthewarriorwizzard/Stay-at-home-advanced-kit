@@ -8,8 +8,8 @@
 
 ## Phase 2: Audio Engine Polyphony
 - [x] Task: Refactor `AudioEngine` to support multiple simultaneous players (one per instrument). (429880c)
-- [~] Task: Add `loadKit(kit: SoundKit)` method to `AudioEngine` to preload all sounds in a kit.
-- [ ] Task: Update `playSound` to accept an `instrumentId` in addition to (or instead of) a URI.
+- [x] Task: Add `loadKit(kit: SoundKit)` method to `AudioEngine` to preload all sounds in a kit. (44a9a86)
+- [x] Task: Update `playSound` to accept an `instrumentId` in addition to (or instead of) a URI. (merged)
 - [ ] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
 
 ## Phase 3: Multi-Track State & UI
