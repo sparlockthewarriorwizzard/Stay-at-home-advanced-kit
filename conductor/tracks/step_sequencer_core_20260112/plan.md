@@ -1,10 +1,10 @@
 # Track Plan: Implement Step Sequencer Core & Audio Engine
 
-## Phase 1: Audio Engine & Clock Logic
+## Phase 1: Audio Engine ## Phase 1: Audio Engine & Clock Logic Clock Logic [checkpoint: 9317329]
 - [~] Task: Create `src/modules/sequencer/AudioEngine.ts` to manage `Sound` loading and playback.
 - [~] Task: Implement a precision timer/scheduler hook (`useSequencerClock`) to handle BPM and step progression (aiming for <20ms drift).
 - [x] Task: Write unit tests for the clock logic (verifying BPM to MS conversion and step cycling). (f5385a7)
-- [ ] Task: Conductor - User Manual Verification 'Audio Engine & Clock Logic' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Audio Engine & Clock Logic' (Protocol in workflow.md)
 
 ## Phase 2: Grid UI Component
 - [ ] Task: Create `src/modules/sequencer/SequencerGrid.tsx` - a visual component rendering 16 steps.
