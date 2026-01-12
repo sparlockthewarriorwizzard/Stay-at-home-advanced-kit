@@ -6,12 +6,12 @@
 - [x] Task: Write unit tests for the clock logic (verifying BPM to MS conversion and step cycling). (f5385a7)
 - [x] Task: Conductor - User Manual Verification 'Audio Engine & Clock Logic' (Protocol in workflow.md)
 
-## Phase 2: Grid UI Component
+## Phase 2: Grid UI Component [checkpoint: a812765]
 - [x] Task: Create `src/modules/sequencer/SequencerGrid.tsx` - a visual component rendering 16 steps. (ea377ad)
 - [x] Task: Implement "toggle" logic for steps (active/inactive state). (merged)
 - [x] Task: Add "Playhead" visual state (highlighting the current step as the clock ticks). (b9f4909)
 - [x] Task: Style the grid with the "Dark Futuristic Neon" aesthetic. (merged)
-- [ ] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Sample Triggering
 - [ ] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
