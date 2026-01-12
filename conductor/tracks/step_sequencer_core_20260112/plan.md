@@ -22,5 +22,5 @@
 
 ## Phase 4: Polish & Performance Tuning
 - [x] Task: Test rhythm stability on device (or best effort). (b4cf1d9)
-- [ ] Task: Optimize audio loading (ensure `prepareToPlayAsync` is called).
+- [x] Task: Optimize audio loading (ensure `prepareToPlayAsync` is called). (b9b52fa)
 - [ ] Task: Conductor - User Manual Verification 'Polish & Performance Tuning' (Protocol in workflow.md)
