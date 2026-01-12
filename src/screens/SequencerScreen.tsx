@@ -5,6 +5,7 @@ import { RootStackParamList } from '../navigation/RootNavigator';
 import { SequencerGrid } from '../modules/sequencer/SequencerGrid';
 import { InstrumentSelector } from '../modules/sequencer/InstrumentSelector';
 import { KitSelector } from '../modules/sequencer/KitSelector';
+import { NeonButton } from '../components/NeonButton';
 import { useSequencerClock } from '../modules/sequencer/useSequencerClock';
 import { AudioEngine } from '../modules/sequencer/AudioEngine';
 import { SoundKitService } from '../services/SoundKitService';
@@ -19,7 +20,6 @@ const SequencerScreen: React.FC = () => {
   const { audioUri } = route.params;
 
   const [bpm, setBpm] = useState(120);
-  // State: Record<instrumentId, boolean[]>
   const [steps, setSteps] = useState<Record<string, boolean[]>>({});
   const [activeInstrumentId, setActiveInstrumentId] = useState<string>(audioUri);
   const [isEngineReady, setIsEngineReady] = useState(false);
@@ -40,11 +40,9 @@ const SequencerScreen: React.FC = () => {
         // 3. Initialize Steps for all instruments
         setSteps(prev => {
             const newSteps = { ...prev };
-            // Ensure voice track exists
             if (!newSteps[audioUri]) {
                 newSteps[audioUri] = new Array(16).fill(false);
             }
-            // Ensure kit instruments exist
             activeKit.instruments.forEach(inst => {
                 if (!newSteps[inst.id]) {
                     newSteps[inst.id] = new Array(16).fill(false);
@@ -60,15 +58,12 @@ const SequencerScreen: React.FC = () => {
     };
 
     setupEngine();
-    // We don't unload on kit change, just keep adding sounds for now (or optimize later)
   }, [audioUri, activeKit]);
 
   // Handle Kit Change
   const handleKitChange = (kit: SoundKit) => {
       setActiveKit(kit);
-      // Reset active instrument if it was from the old kit
       if (activeInstrumentId !== audioUri) {
-          // Default to first instrument of new kit
           if (kit.instruments.length > 0) {
               setActiveInstrumentId(kit.instruments[0].id);
           } else {
@@ -77,11 +72,9 @@ const SequencerScreen: React.FC = () => {
       }
   };
 
-  // Handle step trigger (Audio Engine side)
+  // Handle step trigger
   const onStepTrigger = useCallback((stepIndex: number) => {
     const engine = AudioEngine.getInstance();
-
-    // Check every instrument to see if it should play on this step
     Object.keys(steps).forEach(instrumentId => {
         if (steps[instrumentId] && steps[instrumentId][stepIndex]) {
             engine.playInstrument(instrumentId);
@@ -96,14 +89,12 @@ const SequencerScreen: React.FC = () => {
 
   const toggleStep = (index: number) => {
     if (!activeInstrumentId) {return;}
-
     setSteps(prev => ({
         ...prev,
         [activeInstrumentId]: prev[activeInstrumentId].map((val, i) => i === index ? !val : val),
     }));
   };
 
-  // Helper to get active track name
   const getActiveTrackName = () => {
       if (activeInstrumentId === audioUri) {return 'My Voice';}
       const inst = activeKit.instruments.find(i => i.id === activeInstrumentId);
@@ -164,15 +155,15 @@ const SequencerScreen: React.FC = () => {
         />
 
         <View style={styles.controls}>
-          <TouchableOpacity
-            style={[styles.playButton, isPlaying && styles.stopButton]}
+          <NeonButton
             onPress={isPlaying ? stop : start}
-          >
-            <Ionicons name={isPlaying ? 'stop' : 'play'} size={42} color="#000" />
-          </TouchableOpacity>
+            title={isPlaying ? 'Stop' : 'Play'}
+            color={isPlaying ? '#e74c3c' : '#FFD700'}
+            style={styles.mainButton}
+          />
 
           <TouchableOpacity style={styles.resetButton} onPress={reset}>
-            <Text style={styles.resetButtonText}>Reset</Text>
+            <Text style={styles.resetButtonText}>Reset Pattern</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -255,33 +246,24 @@ const styles = StyleSheet.create({
   controls: {
     marginTop: 32,
     alignItems: 'center',
-    gap: 24,
+    width: '100%',
+    paddingHorizontal: 40,
   },
-  playButton: {
-    backgroundColor: '#FFD700',
-    width: 80,
-    height: 80,
-    borderRadius: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    shadowColor: '#FFD700',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.5,
-    shadowRadius: 15,
-    elevation: 10,
-  },
-  stopButton: {
-    backgroundColor: '#e74c3c',
-    shadowColor: '#e74c3c',
+  mainButton: {
+    width: '100%',
+    height: 60,
   },
   resetButton: {
+    marginTop: 24,
     paddingVertical: 12,
     paddingHorizontal: 24,
   },
   resetButtonText: {
     color: '#666',
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: '600',
+    textTransform: 'uppercase',
+    letterSpacing: 1,
   },
 });
 
