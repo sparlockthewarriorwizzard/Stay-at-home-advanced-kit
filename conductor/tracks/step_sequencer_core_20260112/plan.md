@@ -13,12 +13,12 @@
 - [x] Task: Style the grid with the "Dark Futuristic Neon" aesthetic. (merged)
 - [x] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
 
-## Phase 3: Integration & Sample Triggering
+## Phase 3: Integration ## Phase 3: Integration & Sample Triggering Sample Triggering [checkpoint: 6e5280e]
 - [~] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
 - [ ] Task: Update `AffirmationRecordScreen` to navigate to `SequencerScreen` (passing the audio URI).
 - [x] Task: Integrate `AudioEngine` with `SequencerGrid` - triggering the sample when the playhead hits an active step. (merged)
 - [x] Task: Add Play/Stop and BPM controls to the screen. (28e2c53)
-- [ ] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
 
 ## Phase 4: Polish & Performance Tuning
 - [ ] Task: Test rhythm stability on device (or best effort).
