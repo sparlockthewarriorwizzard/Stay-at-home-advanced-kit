@@ -12,6 +12,6 @@
 - [x] Task: Conductor - User Manual Verification 'Sequencer Grid Animations' (Protocol in workflow.md)
 
 ## Phase 3: Global UI Polish
-- [ ] Task: Update `SequencerScreen` controls (Play/Stop, BPM) to use the new `NeonButton` style.
-- [ ] Task: Apply "Dark Futuristic" background gradients or subtle textures if applicable (using `expo-linear-gradient` if available, or simple styles).
+- [x] Task: Update `SequencerScreen` controls (Play/Stop, BPM) to use the new `NeonButton` style. (f787889)
+- [x] Task: Apply "Dark Futuristic" background gradients or subtle textures if applicable. (skipped - black background preferred)
 - [ ] Task: Conductor - User Manual Verification 'Global UI Polish' (Protocol in workflow.md)
