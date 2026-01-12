@@ -17,7 +17,7 @@
 - [~] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
 - [ ] Task: Update `AffirmationRecordScreen` to navigate to `SequencerScreen` (passing the audio URI).
 - [x] Task: Integrate `AudioEngine` with `SequencerGrid` - triggering the sample when the playhead hits an active step. (merged)
-- [ ] Task: Add Play/Stop and BPM controls to the screen.
+- [x] Task: Add Play/Stop and BPM controls to the screen. (28e2c53)
 - [ ] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
 
 ## Phase 4: Polish & Performance Tuning
