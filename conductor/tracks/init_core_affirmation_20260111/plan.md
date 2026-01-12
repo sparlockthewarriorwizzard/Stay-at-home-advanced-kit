@@ -11,7 +11,7 @@
 - [x] Task: Context7 Check: Query `expo-audio` documentation for recording/playback patterns. (58c14e9)
 - [x] Task: Uninstall `expo-av` and install `expo-audio`. (450446f)
 - [x] Task: Refactor `useAffirmation.ts` to implement `expo-audio` recording logic (start, stop, prepare). (369d56f)
-- [ ] Task: Update `AffirmationRecorder.tsx` UI to reflect the new state management from the refactored hook.
+- [x] Task: Update `AffirmationRecorder.tsx` UI to reflect the new state management from the refactored hook. (483f8ff)
 - [ ] Task: Conductor - User Manual Verification 'Affirmation Module Integration & Refactor' (Protocol in workflow.md)
 
 ## Phase 3: Navigation & Integration
