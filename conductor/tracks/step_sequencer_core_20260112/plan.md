@@ -20,7 +20,7 @@
 - [x] Task: Add Play/Stop and BPM controls to the screen. (28e2c53)
 - [x] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
 
-## Phase 4: Polish & Performance Tuning
+## Phase 4: Polish ## Phase 4: Polish & Performance Tuning Performance Tuning [checkpoint: b9fbbd0]
 - [x] Task: Test rhythm stability on device (or best effort). (b4cf1d9)
 - [x] Task: Optimize audio loading (ensure `prepareToPlayAsync` is called). (b9b52fa)
-- [ ] Task: Conductor - User Manual Verification 'Polish & Performance Tuning' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Polish & Performance Tuning' (Protocol in workflow.md)
