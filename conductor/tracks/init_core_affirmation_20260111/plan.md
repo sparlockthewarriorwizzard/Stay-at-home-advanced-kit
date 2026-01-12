@@ -22,6 +22,6 @@
 
 ## Phase 4: Verification & Cleanup
 - [x] Task: Test the full flow: Navigate -> Record -> Stop -> Playback. (e63ca75)
-- [ ] Task: Verify audio file upload logic in `AffirmationService.ts` (mock if backend not ready).
+- [x] Task: Verify audio file upload logic in `AffirmationService.ts` (mock if backend not ready). (1a75009)
 - [ ] Task: Clean up `extracted_modules` and `Stay-at-home-advanced-kit` folders (delete if empty/merged).
 - [ ] Task: Conductor - User Manual Verification 'Verification & Cleanup' (Protocol in workflow.md)
