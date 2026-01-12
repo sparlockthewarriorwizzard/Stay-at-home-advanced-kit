@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, ScrollView, ViewStyle } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAffirmation } from './useAffirmation';
 import { AffirmationService } from './AffirmationService';
@@ -8,7 +8,6 @@ interface AffirmationRecorderProps {
     service: AffirmationService;
     onSuccess?: () => void;
     // Optional style overrides
-    containerStyle?: ViewStyle;
     primaryColor?: string;
     secondaryColor?: string;
     accentColor?: string;
@@ -17,10 +16,9 @@ interface AffirmationRecorderProps {
 export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
     service,
     onSuccess,
-    containerStyle,
-    primaryColor = '#000',
+    primaryColor = '#007AFF',
     secondaryColor = '#666',
-    accentColor = '#D4AF37',
+    accentColor = '#FFD700', // Gold neon
 }) => {
     const {
         goalText,
@@ -43,11 +41,11 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
     const dynamicStyles = {
         button: { backgroundColor: primaryColor },
         affirmationText: { color: accentColor },
-        recordButton: { backgroundColor: '#e74c3c' }, // Standard red for record
+        recordButton: { backgroundColor: '#e74c3c' },
     };
 
     return (
-        <ScrollView contentContainerStyle={[styles.content, containerStyle]}>
+        <ScrollView style={styles.container} contentContainerStyle={styles.content}>
             <Text style={styles.headerTitle}>New Goal</Text>
 
             {!aiResponse ? (
@@ -56,6 +54,7 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
                     <TextInput
                         style={styles.input}
                         placeholder="I want to..."
+                        placeholderTextColor="#666"
                         multiline
                         value={goalText}
                         onChangeText={setGoalText}
@@ -108,7 +107,7 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
                         )}
 
                         {audioUri && !isRecording && (
-                            <TouchableOpacity style={styles.playButton} onPress={playSound} disabled={isPlaying}>
+                            <TouchableOpacity style={styles.playButton} onPress={playSound}>
                                 <Ionicons name={isPlaying ? 'volume-high' : 'play'} size={32} color="#000" />
                             </TouchableOpacity>
                         )}
@@ -138,6 +137,10 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
 };
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#000', // Dark background
+    },
     content: {
         padding: 24,
     },
@@ -145,23 +148,24 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         marginBottom: 24,
-        color: '#000',
+        color: '#fff',
     },
     label: {
         fontSize: 18,
         fontWeight: '600',
         marginBottom: 12,
-        color: '#333',
+        color: '#fff',
     },
     input: {
         borderWidth: 1,
-        borderColor: '#ddd',
+        borderColor: '#333',
         borderRadius: 12,
         padding: 16,
         fontSize: 16,
         minHeight: 120,
-        backgroundColor: '#f9f9f9',
+        backgroundColor: '#111',
         marginBottom: 24,
+        color: '#fff',
     },
     button: {
         paddingVertical: 16,
@@ -185,13 +189,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         marginBottom: 12,
         marginTop: 24,
-        color: '#333',
+        color: '#fff',
     },
     card: {
         backgroundColor: '#1a1a1a',
         padding: 24,
         borderRadius: 16,
         marginBottom: 8,
+        borderWidth: 1,
+        borderColor: '#333',
     },
     affirmationText: {
         fontSize: 20,
@@ -204,19 +210,21 @@ const styles = StyleSheet.create({
         alignItems: 'flex-start',
         marginBottom: 12,
         padding: 12,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#111',
         borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#222',
     },
     stepText: {
         marginLeft: 12,
         fontSize: 16,
-        color: '#333',
+        color: '#ccc',
         flex: 1,
         lineHeight: 22,
     },
     instructionText: {
         fontSize: 16,
-        color: '#666',
+        color: '#888',
         marginBottom: 24,
         lineHeight: 22,
     },
@@ -253,7 +261,7 @@ const styles = StyleSheet.create({
         width: 60,
         height: 60,
         borderRadius: 30,
-        backgroundColor: '#f1c40f',
+        backgroundColor: '#FFD700',
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -2,7 +2,6 @@ import { Platform } from 'react-native';
 import Purchases, {
   PurchasesPackage,
   CustomerInfo,
-  PurchasesError,
 } from 'react-native-purchases';
 
 // --------------------------------------------------------

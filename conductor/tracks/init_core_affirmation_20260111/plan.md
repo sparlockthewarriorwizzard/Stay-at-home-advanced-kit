@@ -10,7 +10,7 @@
 - [x] Task: Create `src/modules/affirmation-flow` directory and copy files from `extracted_modules/affirmation-flow`. (0023830)
 - [x] Task: Context7 Check: Query `expo-audio` documentation for recording/playback patterns. (58c14e9)
 - [x] Task: Uninstall `expo-av` and install `expo-audio`. (450446f)
-- [ ] Task: Refactor `useAffirmation.ts` to implement `expo-audio` recording logic (start, stop, prepare).
+- [~] Task: Refactor `useAffirmation.ts` to implement `expo-audio` recording logic (start, stop, prepare).
 - [ ] Task: Update `AffirmationRecorder.tsx` UI to reflect the new state management from the refactored hook.
 - [ ] Task: Conductor - User Manual Verification 'Affirmation Module Integration & Refactor' (Protocol in workflow.md)
 

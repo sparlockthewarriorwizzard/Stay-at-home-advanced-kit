@@ -61,7 +61,7 @@ export default function RootNavigator() {
         {/* The Main App (Tabs) */}
         <Stack.Screen name="MainTabs" component={MainTabs} />
 
-        {/* The Paywall (Modal) 
+        {/* The Paywall (Modal)
             presentation: 'modal' makes it slide up from the bottom on iOS
         */}
         <Stack.Screen
