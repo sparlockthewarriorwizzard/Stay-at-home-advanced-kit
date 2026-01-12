@@ -7,8 +7,8 @@
 - [x] Task: Conductor - User Manual Verification 'Audio Engine & Clock Logic' (Protocol in workflow.md)
 
 ## Phase 2: Grid UI Component
-- [ ] Task: Create `src/modules/sequencer/SequencerGrid.tsx` - a visual component rendering 16 steps.
-- [ ] Task: Implement "toggle" logic for steps (active/inactive state).
+- [x] Task: Create `src/modules/sequencer/SequencerGrid.tsx` - a visual component rendering 16 steps. (ea377ad)
+- [x] Task: Implement "toggle" logic for steps (active/inactive state). (merged)
 - [ ] Task: Add "Playhead" visual state (highlighting the current step as the clock ticks).
 - [ ] Task: Style the grid with the "Dark Futuristic Neon" aesthetic.
 - [ ] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
