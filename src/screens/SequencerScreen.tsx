@@ -31,7 +31,7 @@ const SequencerScreen: React.FC = () => {
     };
 
     setupEngine();
-    
+
     return () => {
         // Cleanup sounds on unmount
         AudioEngine.getInstance().unloadAllSounds();
@@ -72,7 +72,7 @@ const SequencerScreen: React.FC = () => {
           <Ionicons name="chevron-back" size={28} color="#fff" />
         </TouchableOpacity>
         <Text style={styles.title}>Sequencer</Text>
-        <View style={{ width: 28 }} /> 
+        <View style={{ width: 28 }} />
       </View>
 
       <View style={styles.content}>
@@ -95,13 +95,13 @@ const SequencerScreen: React.FC = () => {
         />
 
         <View style={styles.controls}>
-          <TouchableOpacity 
-            style={[styles.playButton, isPlaying && styles.stopButton]} 
+          <TouchableOpacity
+            style={[styles.playButton, isPlaying && styles.stopButton]}
             onPress={isPlaying ? stop : start}
           >
             <Ionicons name={isPlaying ? 'stop' : 'play'} size={42} color="#000" />
           </TouchableOpacity>
-          
+
           <TouchableOpacity style={styles.resetButton} onPress={reset}>
             <Text style={styles.resetButtonText}>Reset</Text>
           </TouchableOpacity>

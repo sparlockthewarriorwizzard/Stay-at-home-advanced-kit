@@ -71,7 +71,7 @@ export default function RootNavigator() {
 
                         <Stack.Screen name="Sequencer" component={SequencerScreen} />
 
-                
+
 
                         {/* The Paywall (Modal)  */}        <Stack.Screen
           name="Paywall"

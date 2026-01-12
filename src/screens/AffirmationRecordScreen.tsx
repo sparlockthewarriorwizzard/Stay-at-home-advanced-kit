@@ -3,12 +3,16 @@ import { StyleSheet, SafeAreaView } from 'react-native';
 import { AffirmationRecorder } from '../modules/affirmation-flow/AffirmationRecorder';
 import { AffirmationService } from '../modules/affirmation-flow/AffirmationService';
 import { useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../navigation/RootNavigator';
+
+type NavigationProp = NativeStackNavigationProp<RootStackParamList, 'AffirmationRecord'>;
 
 // In a real app, this would come from an environment variable or a central service file
 const affirmationService = new AffirmationService('https://your-api-url.com');
 
 const AffirmationRecordScreen: React.FC = () => {
-  const navigation = useNavigation();
+  const navigation = useNavigation<NavigationProp>();
 
   const handleSuccess = (audioUri: string) => {
     // Navigate to the next part of the flow (Step Sequencer)
@@ -17,8 +21,8 @@ const AffirmationRecordScreen: React.FC = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <AffirmationRecorder 
-        service={affirmationService} 
+      <AffirmationRecorder
+        service={affirmationService}
         onSuccess={handleSuccess}
       />
     </SafeAreaView>
@@ -33,6 +37,3 @@ const styles = StyleSheet.create({
 });
 
 export default AffirmationRecordScreen;
-
-// Import Alert from react-native since it's used in handleSuccess
-import { Alert } from 'react-native';
