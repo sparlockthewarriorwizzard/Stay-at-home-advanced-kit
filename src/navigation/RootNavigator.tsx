@@ -7,6 +7,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Screens
 import PaywallScreen from '../screens/PaywallScreen';
 import AffirmationRecordScreen from '../screens/AffirmationRecordScreen';
+import HomeScreen from '../screens/HomeScreen';
 
 // @AI-NOTE: REGISTER NEW SCREENS HERE
 // 1. Import the screen component.
@@ -14,7 +15,6 @@ import AffirmationRecordScreen from '../screens/AffirmationRecordScreen';
 // 3. Define the param type in RootStackParamList.
 
 // Placeholders for your actual app screens (AI can replace these easily)
-const HomeScreen = () => <></>;
 const SettingsScreen = () => <></>;
 
 // --------------------------------------------------------
