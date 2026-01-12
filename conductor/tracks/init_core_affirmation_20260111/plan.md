@@ -6,7 +6,7 @@
 - [x] Task: Verify the base app passes static checks (lint/TSC). (bbb0e4c)
 - [ ] Task: Conductor - User Manual Verification 'Project Consolidation & Setup' (Protocol in workflow.md)
 
-## Phase 2: Affirmation Module Integration & Refactor
+## Phase 2: Affirmation Module Integration ## Phase 2: Affirmation Module Integration & Refactor Refactor [checkpoint: a9546ea]
 - [x] Task: Create `src/modules/affirmation-flow` directory and copy files from `extracted_modules/affirmation-flow`. (0023830)
 - [x] Task: Context7 Check: Query `expo-audio` documentation for recording/playback patterns. (58c14e9)
 - [x] Task: Uninstall `expo-av` and install `expo-audio`. (450446f)
