@@ -6,6 +6,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 // Screens
 // Screens
 import PaywallScreen from '../screens/PaywallScreen';
+import AffirmationRecordScreen from '../screens/AffirmationRecordScreen';
 
 // @AI-NOTE: REGISTER NEW SCREENS HERE
 // 1. Import the screen component.
@@ -22,6 +23,7 @@ const SettingsScreen = () => <></>;
 export type RootStackParamList = {
   MainTabs: undefined;
   Paywall: undefined;
+  AffirmationRecord: undefined;
 };
 
 export type MainTabParamList = {
@@ -58,13 +60,13 @@ export default function RootNavigator() {
     <NavigationContainer>
       <Stack.Navigator screenOptions={{ headerShown: false }}>
 
-        {/* The Main App (Tabs) */}
-        <Stack.Screen name="MainTabs" component={MainTabs} />
-
-        {/* The Paywall (Modal)
-            presentation: 'modal' makes it slide up from the bottom on iOS
-        */}
-        <Stack.Screen
+                {/* The Main App (Tabs) */}
+                <Stack.Screen name="MainTabs" component={MainTabs} />
+        
+                {/* Affirmation Flow */}
+                <Stack.Screen name="AffirmationRecord" component={AffirmationRecordScreen} />
+        
+                {/* The Paywall (Modal)  */}        <Stack.Screen
           name="Paywall"
           component={PaywallScreen}
           options={{ presentation: 'modal' }}
