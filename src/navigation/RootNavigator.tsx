@@ -62,10 +62,10 @@ export default function RootNavigator() {
 
                 {/* The Main App (Tabs) */}
                 <Stack.Screen name="MainTabs" component={MainTabs} />
-        
+
                 {/* Affirmation Flow */}
                 <Stack.Screen name="AffirmationRecord" component={AffirmationRecordScreen} />
-        
+
                 {/* The Paywall (Modal)  */}        <Stack.Screen
           name="Paywall"
           component={PaywallScreen}

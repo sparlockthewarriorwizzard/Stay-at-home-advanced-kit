@@ -14,8 +14,8 @@ const HomeScreen: React.FC = () => {
       <View style={styles.content}>
         <Text style={styles.title}>Able Music</Text>
         <Text style={styles.subtitle}>Manifest your reality through music.</Text>
-        
-        <TouchableOpacity 
+
+        <TouchableOpacity
           style={styles.button}
           onPress={() => navigation.navigate('AffirmationRecord')}
         >

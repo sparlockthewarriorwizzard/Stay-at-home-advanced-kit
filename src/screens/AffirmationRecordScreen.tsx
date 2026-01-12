@@ -14,14 +14,14 @@ const AffirmationRecordScreen: React.FC = () => {
     // Navigate to the next part of the flow (Step Sequencer) once implemented
     // For now, we'll just go back or show a message
     Alert.alert('Success', 'Recording saved! Ready for the sequencer.', [
-      { text: 'OK', onPress: () => navigation.goBack() }
+      { text: 'OK', onPress: () => navigation.goBack() },
     ]);
   };
 
   return (
     <SafeAreaView style={styles.container}>
-      <AffirmationRecorder 
-        service={affirmationService} 
+      <AffirmationRecorder
+        service={affirmationService}
         onSuccess={handleSuccess}
       />
     </SafeAreaView>
