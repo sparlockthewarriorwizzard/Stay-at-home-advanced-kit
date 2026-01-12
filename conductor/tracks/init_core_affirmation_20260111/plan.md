@@ -1,7 +1,7 @@
 # Track Plan: Initialize Project Core & Affirmation Recording Flow
 
 ## Phase 1: Project Consolidation & Setup
-- [~] Task: Move `Stay-at-home-advanced-kit` contents to project root and install dependencies.
+- [x] Task: Move `Stay-at-home-advanced-kit` contents to project root and install dependencies. (d0ccb13)
 - [ ] Task: Configure `app.json` (or `app.config.ts`) with correct project name ("Able Music") and bundle identifier.
 - [ ] Task: Verify the base app runs on Android/iOS (simulators).
 - [ ] Task: Conductor - User Manual Verification 'Project Consolidation & Setup' (Protocol in workflow.md)
