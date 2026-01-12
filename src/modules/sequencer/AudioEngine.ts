@@ -1,4 +1,5 @@
 import { AudioPlayer } from 'expo-audio';
+import { Instrument } from '../../types/MusicTypes';
 
 export class AudioEngine {
   private static instance: AudioEngine;
@@ -13,68 +14,78 @@ export class AudioEngine {
     return AudioEngine.instance;
   }
 
-  public async loadSound(uri: string): Promise<void> {
-    if (this.players.has(uri)) {
+  /**
+   * Loads an instrument into the engine.
+   * A unique key is generated based on the instrument ID to allow polyphony.
+   */
+  public async loadInstrument(instrument: Instrument): Promise<void> {
+    const key = instrument.id;
+    if (this.players.has(key)) {
       return;
     }
 
     try {
-      // In expo-audio, we create a player with the source.
-      // updateInterval is set to 100ms by default in the hook, we'll match that.
-      const player = new AudioPlayer(uri, 100);
+      const source = instrument.asset || instrument.uri;
+      if (!source) {
+        throw new Error(`No asset or URI provided for instrument: ${instrument.name}`);
+      }
 
-      // Wait for it to load? expo-audio players might auto-load or have a loading state.
-      // We'll store it immediately.
-      this.players.set(uri, player);
+      // Instantiate player. updateInterval 100ms is standard for status updates.
+      const player = new AudioPlayer(source, 100);
+      this.players.set(key, player);
     } catch (error) {
-      console.error('Error loading sound:', error);
+      console.error(`Error loading instrument ${instrument.name}:`, error);
       throw error;
     }
   }
 
-  public async playSound(uri: string): Promise<void> {
-    const player = this.players.get(uri);
+  /**
+   * Triggers a sound by its instrument ID.
+   */
+  public async playInstrument(instrumentId: string): Promise<void> {
+    const player = this.players.get(instrumentId);
     if (player) {
       try {
-        // Reset to start if needed, or just play.
-        // For a sequencer, we usually want re-triggering.
-        // If it's already playing, we might need to seek to 0.
+        // For rapid triggering in a sequencer, we seek to 0 and play.
         if (player.playing) {
-            player.seekTo(0);
+          player.seekTo(0);
         }
         player.play();
       } catch (error) {
-        console.error('Error playing sound:', error);
+        console.error(`Error playing instrument ${instrumentId}:`, error);
       }
     } else {
-      // Auto-load if not found? Or warn.
-      console.warn(`Sound not loaded for URI: ${uri}`);
+      console.warn(`Instrument not loaded: ${instrumentId}`);
     }
   }
 
-  public stopSound(uri: string): void {
-      const player = this.players.get(uri);
-      if (player) {
-          player.pause();
-          player.seekTo(0);
-      }
+  /**
+   * Legacy method for playing by URI (used by User Affirmation)
+   */
+  public async loadSound(uri: string): Promise<void> {
+      // Treat the URI itself as the ID for backward compatibility
+      await this.loadInstrument({ id: uri, name: 'User Recording', uri });
   }
 
-  public unloadSound(uri: string): void {
-    const player = this.players.get(uri);
-    if (player) {
+  public async playSound(uri: string): Promise<void> {
+      await this.playInstrument(uri);
+  }
+
+  public stopAll(): void {
+    for (const player of this.players.values()) {
+      player.pause();
+      player.seekTo(0);
+    }
+  }
+
+  public unloadAll(): void {
+    for (const [id, player] of this.players.entries()) {
       try {
-        player.remove(); // Release resources
-        this.players.delete(uri);
-      } catch (error) {
-        console.error('Error unloading sound:', error);
+        player.remove();
+      } catch (e) {
+        console.error(`Failed to remove player ${id}`, e);
       }
     }
-  }
-
-  public unloadAllSounds(): void {
-    for (const uri of this.players.keys()) {
-      this.unloadSound(uri);
-    }
+    this.players.clear();
   }
 }
