@@ -14,7 +14,7 @@
 - [x] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
 
 ## Phase 3: Integration & Sample Triggering
-- [ ] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
+- [~] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
 - [ ] Task: Update `AffirmationRecordScreen` to navigate to `SequencerScreen` (passing the audio URI).
 - [ ] Task: Integrate `AudioEngine` with `SequencerGrid` - triggering the sample when the playhead hits an active step.
 - [ ] Task: Add Play/Stop and BPM controls to the screen.
