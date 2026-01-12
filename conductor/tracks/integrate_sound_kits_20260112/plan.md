@@ -12,11 +12,11 @@
 - [x] Task: Update `playSound` to accept an `instrumentId` in addition to (or instead of) a URI. (merged)
 - [x] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
 
-## Phase 3: Multi-Track State & UI
+## Phase 3: Multi-Track State ## Phase 3: Multi-Track State & UI UI [checkpoint: 4c2e8b2]
 - [~] Task: Refactor `SequencerScreen` state to hold a 2D array (or map) of steps: `steps[instrumentId][stepIndex]`.
 - [ ] Task: Create `InstrumentSelector` component to switch the active "Lane" being edited on the grid.
 - [ ] Task: Update `onStepTrigger` to trigger the correct sound for the current step's active instruments.
-- [ ] Task: Conductor - User Manual Verification 'Multi-Track State & UI' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Multi-Track State - [ ] Task: Conductor - User Manual Verification 'Multi-Track State & UI' UI' (Protocol in workflow.md)
 
 ## Phase 4: Polish & Integration
 - [ ] Task: Add "Kit Selector" UI to `SequencerScreen`.
