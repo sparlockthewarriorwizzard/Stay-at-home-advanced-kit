@@ -8,6 +8,7 @@ import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import PaywallScreen from '../screens/PaywallScreen';
 import AffirmationRecordScreen from '../screens/AffirmationRecordScreen';
 import HomeScreen from '../screens/HomeScreen';
+import SequencerScreen from '../screens/SequencerScreen';
 
 // @AI-NOTE: REGISTER NEW SCREENS HERE
 // 1. Import the screen component.
@@ -24,6 +25,7 @@ export type RootStackParamList = {
   MainTabs: undefined;
   Paywall: undefined;
   AffirmationRecord: undefined;
+  Sequencer: { audioUri: string };
 };
 
 export type MainTabParamList = {
@@ -63,10 +65,15 @@ export default function RootNavigator() {
                 {/* The Main App (Tabs) */}
                 <Stack.Screen name="MainTabs" component={MainTabs} />
 
-                {/* Affirmation Flow */}
-                <Stack.Screen name="AffirmationRecord" component={AffirmationRecordScreen} />
+                        {/* Affirmation Flow */}
 
-                {/* The Paywall (Modal)  */}        <Stack.Screen
+                        <Stack.Screen name="AffirmationRecord" component={AffirmationRecordScreen} />
+
+                        <Stack.Screen name="Sequencer" component={SequencerScreen} />
+
+                
+
+                        {/* The Paywall (Modal)  */}        <Stack.Screen
           name="Paywall"
           component={PaywallScreen}
           options={{ presentation: 'modal' }}
