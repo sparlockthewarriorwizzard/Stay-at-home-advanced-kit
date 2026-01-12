@@ -13,7 +13,7 @@
 - [x] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
 
 ## Phase 3: Multi-Track State & UI
-- [ ] Task: Refactor `SequencerScreen` state to hold a 2D array (or map) of steps: `steps[instrumentId][stepIndex]`.
+- [~] Task: Refactor `SequencerScreen` state to hold a 2D array (or map) of steps: `steps[instrumentId][stepIndex]`.
 - [ ] Task: Create `InstrumentSelector` component to switch the active "Lane" being edited on the grid.
 - [ ] Task: Update `onStepTrigger` to trigger the correct sound for the current step's active instruments.
 - [ ] Task: Conductor - User Manual Verification 'Multi-Track State & UI' (Protocol in workflow.md)

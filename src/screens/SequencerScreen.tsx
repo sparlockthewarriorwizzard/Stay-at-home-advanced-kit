@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ActivityIndicat
 import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { SequencerGrid } from '../modules/sequencer/SequencerGrid';
+import { InstrumentSelector } from '../modules/sequencer/InstrumentSelector';
 import { useSequencerClock } from '../modules/sequencer/useSequencerClock';
 import { AudioEngine } from '../modules/sequencer/AudioEngine';
+import { SoundKitService } from '../services/SoundKitService';
 import { Ionicons } from '@expo/vector-icons';
 
 type SequencerScreenRouteProp = RouteProp<RootStackParamList, 'Sequencer'>;
@@ -15,15 +17,34 @@ const SequencerScreen: React.FC = () => {
   const { audioUri } = route.params;
 
   const [bpm, setBpm] = useState(120);
-  const [steps, setSteps] = useState<boolean[]>(new Array(16).fill(false));
+  // State: Record<instrumentId, boolean[]>
+  const [steps, setSteps] = useState<Record<string, boolean[]>>({});
+  const [activeInstrumentId, setActiveInstrumentId] = useState<string>(audioUri);
   const [isEngineReady, setIsEngineReady] = useState(false);
+  const [activeKit] = useState(SoundKitService.getDefaultKit());
 
-  // Initialize Audio Engine
+  // Initialize Audio Engine & Kit
   useEffect(() => {
     const setupEngine = async () => {
       try {
         const engine = AudioEngine.getInstance();
+
+        // 1. Load User Affirmation (Voice)
         await engine.loadSound(audioUri);
+
+        // 2. Load Drum Kit
+        await engine.loadKit(activeKit);
+
+        // 3. Initialize Steps for all instruments
+        const initialSteps: Record<string, boolean[]> = {};
+        // Voice
+        initialSteps[audioUri] = new Array(16).fill(false);
+        // Kit Instruments
+        activeKit.instruments.forEach(inst => {
+            initialSteps[inst.id] = new Array(16).fill(false);
+        });
+
+        setSteps(initialSteps);
         setIsEngineReady(true);
       } catch (error) {
         console.error('Failed to load audio in sequencer:', error);
@@ -33,17 +54,21 @@ const SequencerScreen: React.FC = () => {
     setupEngine();
 
     return () => {
-        // Cleanup sounds on unmount
-        AudioEngine.getInstance().unloadAllSounds();
+        AudioEngine.getInstance().unloadAll();
     };
-  }, [audioUri]);
+  }, [audioUri, activeKit]);
 
-  // Handle step trigger
+  // Handle step trigger (Audio Engine side)
   const onStepTrigger = useCallback((stepIndex: number) => {
-    if (steps[stepIndex]) {
-      AudioEngine.getInstance().playSound(audioUri);
-    }
-  }, [steps, audioUri]);
+    const engine = AudioEngine.getInstance();
+
+    // Check every instrument to see if it should play on this step
+    Object.keys(steps).forEach(instrumentId => {
+        if (steps[instrumentId] && steps[instrumentId][stepIndex]) {
+            engine.playInstrument(instrumentId);
+        }
+    });
+  }, [steps]);
 
   const { currentStep, isPlaying, start, stop, reset } = useSequencerClock({
     bpm,
@@ -51,19 +76,29 @@ const SequencerScreen: React.FC = () => {
   });
 
   const toggleStep = (index: number) => {
-    const newSteps = [...steps];
-    newSteps[index] = !newSteps[index];
-    setSteps(newSteps);
+    if (!activeInstrumentId) {return;}
+
+    setSteps(prev => ({
+        ...prev,
+        [activeInstrumentId]: prev[activeInstrumentId].map((val, i) => i === index ? !val : val),
+    }));
   };
 
   if (!isEngineReady) {
     return (
       <View style={styles.loadingContainer}>
         <ActivityIndicator size="large" color="#FFD700" />
-        <Text style={styles.loadingText}>Preparing your sound...</Text>
+        <Text style={styles.loadingText}>Loading Kit...</Text>
       </View>
     );
   }
+
+  // Helper to get active track name
+  const getActiveTrackName = () => {
+      if (activeInstrumentId === audioUri) {return 'My Voice';}
+      const inst = activeKit.instruments.find(i => i.id === activeInstrumentId);
+      return inst ? inst.name : 'Unknown';
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -88,10 +123,21 @@ const SequencerScreen: React.FC = () => {
             </View>
         </View>
 
+        <View style={styles.trackInfo}>
+            <Text style={styles.trackLabel}>Editing: <Text style={styles.activeTrackName}>{getActiveTrackName()}</Text></Text>
+        </View>
+
         <SequencerGrid
-          steps={steps}
+          steps={steps[activeInstrumentId] || []}
           currentStep={currentStep}
           onToggleStep={toggleStep}
+        />
+
+        <InstrumentSelector
+            instruments={activeKit.instruments}
+            activeInstrumentId={activeInstrumentId}
+            onSelectInstrument={setActiveInstrumentId}
+            voiceUri={audioUri}
         />
 
         <View style={styles.controls}>
@@ -145,12 +191,12 @@ const styles = StyleSheet.create({
   content: {
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     paddingBottom: 40,
   },
   bpmContainer: {
       alignItems: 'center',
-      marginBottom: 32,
+      marginBottom: 20,
+      marginTop: 20,
   },
   bpmLabel: {
       color: '#fff',
@@ -172,8 +218,19 @@ const styles = StyleSheet.create({
       borderWidth: 1,
       borderColor: '#333',
   },
+  trackInfo: {
+      marginBottom: 16,
+  },
+  trackLabel: {
+      color: '#888',
+      fontSize: 16,
+  },
+  activeTrackName: {
+      color: '#FFD700',
+      fontWeight: 'bold',
+  },
   controls: {
-    marginTop: 48,
+    marginTop: 32,
     alignItems: 'center',
     gap: 24,
   },

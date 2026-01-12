@@ -1,6 +1,6 @@
 import { SoundKit } from '../types/MusicTypes';
 
-// Placeholder for real assets. 
+// Placeholder for real assets.
 // In a real build, we would use require('../assets/sounds/kick.wav')
 // But since these files were just created, I'll define the service to handle them.
 
@@ -14,6 +14,7 @@ export class SoundKitService {
         { id: '909-kick', name: 'Kick', asset: require('../assets/sounds/kick.wav') },
         { id: '909-snare', name: 'Snare', asset: require('../assets/sounds/snare.wav') },
         { id: '909-hihat', name: 'HiHat', asset: require('../assets/sounds/hihat.wav') },
+        { id: '909-clap', name: 'Clap', asset: require('../assets/sounds/clap.wav') },
       ],
     },
     {
@@ -25,7 +26,7 @@ export class SoundKitService {
           { id: 'lofi-snare', name: 'Snare', asset: require('../assets/sounds/snare.wav') },
           { id: 'lofi-hihat', name: 'HiHat', asset: require('../assets/sounds/hihat.wav') },
         ],
-      }
+      },
   ];
 
   public static getKits(): SoundKit[] {
