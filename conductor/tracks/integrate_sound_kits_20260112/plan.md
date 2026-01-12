@@ -7,8 +7,8 @@
 - [ ] Task: Conductor - User Manual Verification 'Asset Preparation & Data Structure' (Protocol in workflow.md)
 
 ## Phase 2: Audio Engine Polyphony
-- [ ] Task: Refactor `AudioEngine` to support multiple simultaneous players (one per instrument).
-- [ ] Task: Add `loadKit(kit: SoundKit)` method to `AudioEngine` to preload all sounds in a kit.
+- [x] Task: Refactor `AudioEngine` to support multiple simultaneous players (one per instrument). (429880c)
+- [~] Task: Add `loadKit(kit: SoundKit)` method to `AudioEngine` to preload all sounds in a kit.
 - [ ] Task: Update `playSound` to accept an `instrumentId` in addition to (or instead of) a URI.
 - [ ] Task: Conductor - User Manual Verification 'Audio Engine Polyphony' (Protocol in workflow.md)
 
