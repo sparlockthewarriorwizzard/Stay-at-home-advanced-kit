@@ -11,7 +11,7 @@
     -   Implement the basic "Split Pane" layout (Fixed Left Sidebar, Scrollable Right Content).
     -   *Test:* Verify navigation between Matrix and Sequencer views.
 
-- [ ] **Task 2: Implement Track Headers (Left Sidebar)**
+- [x] **Task 2: Implement Track Headers (Left Sidebar)** (87db778)
     -   Create `TrackHeader` component.
     -   Implement vertical stack matching the 8 colors/icons from Loop Board.
     -   Ensure sticky positioning (stays visible while timeline scrolls horizontally).
