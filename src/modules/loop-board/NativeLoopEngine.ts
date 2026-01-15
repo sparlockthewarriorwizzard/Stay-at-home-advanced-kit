@@ -152,6 +152,13 @@ class NativeLoopEngine {
         });
     }
 
+    async unloadAll() {
+        await this.stopAll();
+        this.buffers = {};
+        this.isLoaded = false;
+        await AudioEngine.getInstance().close();
+    }
+
     public getLoadedBuffers(): Record<string, AudioBuffer> {
         return this.buffers;
     }

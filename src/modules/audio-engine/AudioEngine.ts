@@ -63,4 +63,14 @@ export class AudioEngine {
   public get currentTime(): number {
       return this.context.currentTime;
   }
+
+  /**
+   * Closes the AudioContext and releases native resources.
+   */
+  public async close(): Promise<void> {
+    if (this.context) {
+      await this.context.close();
+    }
+    AudioEngine.instance = null as any;
+  }
 }

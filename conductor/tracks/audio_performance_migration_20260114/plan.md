@@ -47,7 +47,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 4: Vocal Overdub & Alignment' (Protocol in workflow.md)
 
 ## Phase 5: Final Optimization & EAS Build
-- [ ] **Task 8: Global Memory & Performance Audit**
+- [~] **Task 8: Global Memory & Performance Audit**
     - Enable `largeHeap` in Android Manifest.
     - Verify buffer disposal logic when switching kits or closing the app.
     - Perform final EAS builds for both iOS and Android.
