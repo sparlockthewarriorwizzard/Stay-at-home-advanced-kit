@@ -17,16 +17,16 @@
     - *Test:* Unit tests for buffer loading and basic scheduling logic.
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Environment & Engine Setup' (Protocol in workflow.md)
 
-## Phase 2: Loop Board Migration
-- [~] **Task 3: Refactor `LoopStore` for Native Buffers**
+## Phase 2: Loop Board Migration [checkpoint: 3633b6c]
+- [x] **Task 3: Refactor `LoopStore` for Native Buffers**
     - Update `LoopStore` to hold references to `AudioBuffer`s instead of URIs/IDs.
     - Implement preloading logic for the "Default" kit on app startup.
     - *Test:* Verify all buffers for the default kit are loaded and held in native memory.
-- [ ] **Task 4: High-Performance `LoopPad` Implementation**
+- [x] **Task 4: High-Performance `LoopPad` Implementation**
     - Update `LoopPad` to use the new `AudioEngine` for triggering.
     - Sync the "radial wipe" animation to `audioContext.currentTime` for sub-millisecond visual alignment.
     - *Test:* Verify touch-to-sound latency is perceptibly lower than `expo-av`.
-- [ ] Task: Conductor - User Manual Verification 'Phase 2: Loop Board Migration' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 2: Loop Board Migration' (Protocol in workflow.md)
 
 ## Phase 3: Sequencer & Lookahead Scheduler
 - [ ] **Task 5: Implement Lookahead Scheduler**
