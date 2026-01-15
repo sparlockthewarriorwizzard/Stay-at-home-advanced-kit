@@ -17,19 +17,9 @@ import { useLoopStore } from '../modules/loop-board/LoopStore';
 import NativeLoopEngine from '../modules/loop-board/NativeLoopEngine';
 import { SequencerTimelineView } from '../modules/sequencer-timeline/SequencerTimelineView';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { TRACK_DEFINITIONS } from '../types/MusicTypes';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LoopBoard'>;
-
-const TRACKS = [
-  { id: 'track1', name: 'Kick', type: 'kick', color: COLORS.kick },
-  { id: 'track2', name: 'Clap', type: 'clap', color: COLORS.clap },
-  { id: 'track3', name: 'Tops', type: 'tops', color: COLORS.tops },
-  { id: 'track4', name: 'Bass', type: 'bass', color: COLORS.bass },
-  { id: 'track5', name: 'Chords', type: 'chords', color: COLORS.chords },
-  { id: 'track6', name: 'Vocal', type: 'vocal', color: COLORS.vocal },
-  { id: 'track7', name: 'Adds', type: 'adds', color: COLORS.adds },
-  { id: 'track8', name: 'FX', type: 'fx', color: COLORS.fx },
-];
 
 const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
 
@@ -129,13 +119,14 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
 
       {/* Main Content Area */}
       <View style={styles.contentArea}>
+      {/* Live Loop Matrix */}
+      <View style={styles.matrixContainer}>
         {activeView === 'LOOP' ? (
-          <View style={styles.matrixContainer}>
-            <View style={styles.matrix}>
-              {TRACKS.map((track) => (
-                <View key={track.id} style={styles.column}>
-                  <Text style={[styles.columnHeader, { color: track.color }]}>{track.name}</Text>
-                  {VARIATIONS.map((variation) => {
+          <View style={styles.matrix}>
+            {TRACK_DEFINITIONS.map((track) => (
+              <View key={track.id} style={styles.column}>
+                <Text style={[styles.columnHeader, { color: track.color }]}>{track.name}</Text>
+                {VARIATIONS.map((variation) => {
                     const loopId = `${track.type}${VARIATIONS.indexOf(variation) + 1}`;
 
                     return (
