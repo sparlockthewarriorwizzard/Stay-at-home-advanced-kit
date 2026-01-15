@@ -19,7 +19,7 @@
     -   *Spec:* Icon only, background color matches track, high Z-index.
 
 ## Phase 2: Timeline & Ruler
-- [ ] **Task 3: Implement Timeline Ruler & Grid**
+- [x] **Task 3: Implement Timeline Ruler & Grid** (63d9f97)
     -   Create `TimelineRuler` component (Top fixed bar).
     -   Render Bar numbers (1, 2, 3...) and grid lines (vertical).
     -   Implement horizontal scrolling logic.
