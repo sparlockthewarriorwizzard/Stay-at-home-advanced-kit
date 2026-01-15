@@ -2,13 +2,15 @@ import React, { useEffect, useState } from 'react';
 import {
   View,
   Text,
-  TouchableOpacity,
   StyleSheet,
+  TouchableOpacity,
   ActivityIndicator,
   Alert,
-  SafeAreaView,
   ScrollView,
 } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
+
 import { PurchasesPackage } from 'react-native-purchases';
 import RevenueCatService from '../services/RevenueCat';
 import { useNavigation } from '@react-navigation/native';
@@ -126,16 +128,16 @@ const styles = StyleSheet.create({
     backgroundColor: '#fff',
   },
   contentContainer: {
-    padding: 24,
+    padding: 16,
     flexGrow: 1,
     justifyContent: 'center',
   },
   header: {
-    marginBottom: 40,
+    marginBottom: 24,
     alignItems: 'center',
   },
   title: {
-    fontSize: 28,
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 12,
     textAlign: 'center',

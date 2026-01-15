@@ -1,8 +1,11 @@
+import { Asset } from 'expo-asset';
 import { SoundKit } from '../types/MusicTypes';
 
-// Placeholder for real assets.
-// In a real build, we would use require('../assets/sounds/kick.wav')
-// But since these files were just created, I'll define the service to handle them.
+// Import assets directly
+const kickAsset = require('../assets/sounds/kick.wav');
+const snareAsset = require('../assets/sounds/snare.wav');
+const hihatAsset = require('../assets/sounds/hihat.wav');
+const clapAsset = require('../assets/sounds/clap.wav');
 
 export class SoundKitService {
   private static kits: SoundKit[] = [
@@ -11,10 +14,10 @@ export class SoundKitService {
       name: 'Classic 909',
       description: 'Standard electronic drum kit',
       instruments: [
-        { id: '909-kick', name: 'Kick', asset: require('../assets/sounds/kick.wav') },
-        { id: '909-snare', name: 'Snare', asset: require('../assets/sounds/snare.wav') },
-        { id: '909-hihat', name: 'HiHat', asset: require('../assets/sounds/hihat.wav') },
-        { id: '909-clap', name: 'Clap', asset: require('../assets/sounds/clap.wav') },
+        { id: '909-kick', name: 'Kick', asset: kickAsset },
+        { id: '909-snare', name: 'Snare', asset: snareAsset },
+        { id: '909-hihat', name: 'HiHat', asset: hihatAsset },
+        { id: '909-clap', name: 'Clap', asset: clapAsset },
       ],
     },
     {
@@ -22,9 +25,9 @@ export class SoundKitService {
         name: 'Lofi Vibes',
         description: 'Mellow lofi drum sounds',
         instruments: [
-          { id: 'lofi-kick', name: 'Kick', asset: require('../assets/sounds/kick.wav') }, // Reuse placeholders
-          { id: 'lofi-snare', name: 'Snare', asset: require('../assets/sounds/snare.wav') },
-          { id: 'lofi-hihat', name: 'HiHat', asset: require('../assets/sounds/hihat.wav') },
+          { id: 'lofi-kick', name: 'Kick', asset: kickAsset }, // Reuse placeholders
+          { id: 'lofi-snare', name: 'Snare', asset: snareAsset },
+          { id: 'lofi-hihat', name: 'HiHat', asset: hihatAsset },
         ],
       },
   ];

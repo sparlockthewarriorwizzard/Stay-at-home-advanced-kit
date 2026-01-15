@@ -48,3 +48,4 @@ fastlane/test_output
 
 # Ruby
 Gemfile.lock
+.expo/

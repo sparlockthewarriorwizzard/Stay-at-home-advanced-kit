@@ -1,117 +1,103 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView, ActivityIndicator } from 'react-native';
-import { useRoute, RouteProp, useNavigation } from '@react-navigation/native';
+import React, { useEffect, useState, useRef } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { SequencerGrid } from '../modules/sequencer/SequencerGrid';
-import { InstrumentSelector } from '../modules/sequencer/InstrumentSelector';
 import { KitSelector } from '../modules/sequencer/KitSelector';
 import { NeonButton } from '../components/NeonButton';
-import { useSequencerClock } from '../modules/sequencer/useSequencerClock';
-import { AudioEngine } from '../modules/sequencer/AudioEngine';
 import { SoundKitService } from '../services/SoundKitService';
 import { Ionicons } from '@expo/vector-icons';
 import { SoundKit } from '../types/MusicTypes';
+import { WebAudioEngine, WebAudioEngineRef } from '../modules/sequencer/WebAudioEngine';
 
 type SequencerScreenRouteProp = RouteProp<RootStackParamList, 'Sequencer'>;
 
 const SequencerScreen: React.FC = () => {
   const route = useRoute<SequencerScreenRouteProp>();
-  const navigation = useNavigation();
-  const { audioUri } = route.params;
+  const navigation = useNavigation<any>(); 
+  const { affirmationText } = route.params;
 
   const [bpm, setBpm] = useState(120);
   const [steps, setSteps] = useState<Record<string, boolean[]>>({});
-  const [activeInstrumentId, setActiveInstrumentId] = useState<string>(audioUri);
-  const [isEngineReady, setIsEngineReady] = useState(false);
   const [activeKit, setActiveKit] = useState<SoundKit>(SoundKitService.getDefaultKit());
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [currentStep, setCurrentStep] = useState(0);
 
-  // Initialize Audio Engine & Kit
+  const engineRef = useRef<WebAudioEngineRef>(null);
+
+  // Initialize Steps
   useEffect(() => {
-    const setupEngine = async () => {
-      try {
-        const engine = AudioEngine.getInstance();
-
-        // 1. Load User Affirmation (Voice)
-        await engine.loadSound(audioUri);
-
-        // 2. Load Drum Kit
-        await engine.loadKit(activeKit);
-
-        // 3. Initialize Steps for all instruments
-        setSteps(prev => {
-            const newSteps = { ...prev };
-            if (!newSteps[audioUri]) {
-                newSteps[audioUri] = new Array(16).fill(false);
+    // 1. Initialize Steps for all instruments if empty
+    setSteps(prev => {
+        const newSteps = { ...prev };
+        activeKit.instruments.forEach(inst => {
+            if (!newSteps[inst.id]) {
+                newSteps[inst.id] = new Array(16).fill(false);
             }
-            activeKit.instruments.forEach(inst => {
-                if (!newSteps[inst.id]) {
-                    newSteps[inst.id] = new Array(16).fill(false);
-                }
-            });
-            return newSteps;
         });
-
-        setIsEngineReady(true);
-      } catch (error) {
-        console.error('Failed to load audio in sequencer:', error);
-      }
-    };
-
-    setupEngine();
-  }, [audioUri, activeKit]);
+        return newSteps;
+    });
+  }, [activeKit]);
 
   // Handle Kit Change
   const handleKitChange = (kit: SoundKit) => {
       setActiveKit(kit);
-      if (activeInstrumentId !== audioUri) {
-          if (kit.instruments.length > 0) {
-              setActiveInstrumentId(kit.instruments[0].id);
-          } else {
-              setActiveInstrumentId(audioUri);
-          }
+  };
+
+  const handleStartStop = () => {
+      if (isPlaying) {
+          engineRef.current?.sendCommand({ type: 'STOP' });
+          setIsPlaying(false);
+      } else {
+          // Send latest pattern before starting
+          engineRef.current?.sendCommand({ type: 'UPDATE_PATTERN', pattern: steps });
+          engineRef.current?.sendCommand({ type: 'SET_BPM', bpm });
+          engineRef.current?.sendCommand({ type: 'START' });
+          setIsPlaying(true);
       }
   };
 
-  // Handle step trigger
-  const onStepTrigger = useCallback((stepIndex: number) => {
-    const engine = AudioEngine.getInstance();
-    Object.keys(steps).forEach(instrumentId => {
-        if (steps[instrumentId] && steps[instrumentId][stepIndex]) {
-            engine.playInstrument(instrumentId);
+  const handleReset = () => {
+    engineRef.current?.sendCommand({ type: 'STOP' });
+    setIsPlaying(false);
+    setCurrentStep(0);
+    setSteps({}); // Clear pattern locally
+    engineRef.current?.sendCommand({ type: 'UPDATE_PATTERN', pattern: {} }); // Clear in engine
+  };
+
+  const toggleStep = (instrumentId: string, index: number) => {
+    setSteps(prev => {
+        const currentSteps = prev[instrumentId] || new Array(16).fill(false);
+        const newStepValue = !currentSteps[index];
+        
+        const nextSteps = {
+            ...prev,
+            [instrumentId]: currentSteps.map((val, i) => i === index ? newStepValue : val)
+        };
+
+        // Live Update the Engine
+        engineRef.current?.sendCommand({ type: 'UPDATE_PATTERN', pattern: nextSteps });
+        
+        // Preview sound if added
+        if (newStepValue) {
+            engineRef.current?.sendCommand({ type: 'PREVIEW', instrumentId });
         }
+
+        return nextSteps;
     });
-  }, [steps]);
-
-  const { currentStep, isPlaying, start, stop, reset } = useSequencerClock({
-    bpm,
-    onStep: onStepTrigger,
-  });
-
-  const toggleStep = (index: number) => {
-    if (!activeInstrumentId) {return;}
-    setSteps(prev => ({
-        ...prev,
-        [activeInstrumentId]: prev[activeInstrumentId].map((val, i) => i === index ? !val : val),
-    }));
   };
 
-  const getActiveTrackName = () => {
-      if (activeInstrumentId === audioUri) {return 'My Voice';}
-      const inst = activeKit.instruments.find(i => i.id === activeInstrumentId);
-      return inst ? inst.name : 'Unknown';
-  };
-
-  if (!isEngineReady) {
-    return (
-      <View style={styles.loadingContainer}>
-        <ActivityIndicator size="large" color="#FFD700" />
-        <Text style={styles.loadingText}>Loading Kit...</Text>
-      </View>
-    );
-  }
+  // Handle BPM changes
+  useEffect(() => {
+      engineRef.current?.sendCommand({ type: 'SET_BPM', bpm });
+  }, [bpm]);
 
   return (
     <SafeAreaView style={styles.container}>
+      {/* Hidden Web Audio Engine */}
+      <WebAudioEngine ref={engineRef} onTick={setCurrentStep} />
+
       <View style={styles.header}>
         <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
           <Ionicons name="chevron-back" size={28} color="#fff" />
@@ -138,33 +124,41 @@ const SequencerScreen: React.FC = () => {
         </View>
 
         <View style={styles.trackInfo}>
-            <Text style={styles.trackLabel}>Editing: <Text style={styles.activeTrackName}>{getActiveTrackName()}</Text></Text>
+            <Text style={styles.trackLabel}>Pattern Editor</Text>
         </View>
 
         <SequencerGrid
-          steps={steps[activeInstrumentId] || []}
+          tracks={[
+              ...activeKit.instruments.map(inst => ({ id: inst.id, name: inst.name, color: '#FFD700' }))
+          ]}
+          steps={steps}
           currentStep={currentStep}
-          onToggleStep={toggleStep}
-        />
-
-        <InstrumentSelector
-            instruments={activeKit.instruments}
-            activeInstrumentId={activeInstrumentId}
-            onSelectInstrument={setActiveInstrumentId}
-            voiceUri={audioUri}
+          onToggleStep={(instrumentId, index) => toggleStep(instrumentId, index)}
         />
 
         <View style={styles.controls}>
           <NeonButton
-            onPress={isPlaying ? stop : start}
+            onPress={handleStartStop}
             title={isPlaying ? 'Stop' : 'Play'}
             color={isPlaying ? '#e74c3c' : '#FFD700'}
             style={styles.mainButton}
           />
 
-          <TouchableOpacity style={styles.resetButton} onPress={reset}>
+          <TouchableOpacity style={styles.resetButton} onPress={handleReset}>
             <Text style={styles.resetButtonText}>Reset Pattern</Text>
           </TouchableOpacity>
+
+          <NeonButton
+            title="Next: Record Vocal"
+            onPress={() => navigation.navigate('VocalOverdub', { 
+                affirmationText, 
+                steps, 
+                bpm, 
+                kitId: activeKit.id 
+            })}
+            color="#00E676" // Green color
+            style={{ marginTop: 20, width: '100%' }}
+          />
         </View>
       </View>
     </SafeAreaView>
@@ -175,17 +169,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: '#000',
-  },
-  loadingContainer: {
-    flex: 1,
-    backgroundColor: '#000',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    color: '#FFD700',
-    marginTop: 16,
-    fontSize: 18,
   },
   header: {
     flexDirection: 'row',

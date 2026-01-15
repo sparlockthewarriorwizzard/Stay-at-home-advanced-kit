@@ -1,0 +1,245 @@
+Here is a detailed technical specification based on the video analysis, formatted specifically for you to paste into the Gemini / Antigravity IDE context.
+
+---
+
+### **System Prompt / Feature Specification: Loop Sequencer & Arranger App**
+
+**Overview**
+The application is a grid-based music loop sequencer and linear arrangement tool. It features a high-contrast "Dark Mode" UI with a distinct, channel-based neon color coding system. The UX is split into two primary views: a **Live Loop Matrix** for performance and a **Sequencer Timeline** for arrangement.
+
+#### **1. Design System & Visual Style**
+
+* **Theme:** Deep Dark Mode (Background `~#1E1E1E` or `~#121212`).
+* **Typography:** Clean Sans-Serif (e.g., Roboto, Inter, or SF Pro). White text for labels on dark backgrounds; Dark text for labels on active (filled) buttons.
+* **Shape Language:**
+* **Pads/Cells:** Rounded rectangles with moderate corner radius (approx 8px - 12px).
+* **Buttons:** Circular or pill-shaped for playback controls.
+
+
+* **Color Palette (Channel Coding):**
+Each vertical column (instrument track) is assigned a static identifying color.
+* **Track 1 (Kick):** Salmon Red (`#FF6B6B`)
+* **Track 2 (Clap):** Muted Orange (`#FF9F43`)
+* **Track 3 (Tops/Perc):** Mustard Yellow (`#FACA2E`)
+* **Track 4 (Bass):** Emerald Green (`#2ECC71`)
+* **Track 5 (Chords):** Cyan/Turquoise (`#00D2D3`)
+* **Track 6 (Vocal):** Medium Purple (`#9C88FF`)
+* **Track 7 (Adds):** Pink/Magenta (`#FD79A8`)
+* **Track 8 (FX):** Sky Blue (`#54A0FF`)
+
+
+
+#### **2. Top Navigation & Transport Bar**
+
+**Layout:** Fixed top bar (height ~60dp).
+**Elements (Left to Right):**
+
+1. **App/Project Title:** Text display (e.g., "ON THE FLOOR").
+2. **Key Selector:** A dropdown/button displaying the musical key (e.g., "D#m").
+3. **Transport Controls:**
+* **Play:** Solid white triangle icon.
+* **Stop:** Solid white square icon.
+* **Metronome:** Icon toggles click track.
+* **Tempo:** Numeric display (e.g., "120") for BPM.
+
+
+4. **View Switcher (Tabs):**
+* Text labels: `Loop`, `Seq`, `Drum`, `Song`.
+* **Active State:** Indicated by a small colored dot or underline matching the active theme color (e.g., Green dot for 'Loop').
+
+
+5. **Record Button:** A prominent Red circle button on the far right.
+
+#### **3. Feature: Live Loop Matrix (View 'Loop')**
+
+**Layout:**
+
+* A scrollable grid of buttons (pads).
+* **Columns:** Represent Instrument Tracks (Kick, Clap, Bass, etc.).
+* **Rows:** Represent Variation Patterns (e.g., "Fallen", "Eventual", "Hunted").
+
+**Component: The Loop Pad**
+
+* **Inactive State:** Dark background (near black), roughly 2px stroke border in the *Track Color*. Text label centered in *Track Color*.
+* **Active/Playing State:** Solid fill in the *Track Color*. Text label turns dark/white (high contrast).
+* **Playback Animation (Crucial):**
+* When a pad is active and playing, a **radial wipe / pie-chart overlay** (slightly darker or lighter shade) rotates clockwise 360° to indicate the loop progress (1 bar or 4 bars).
+* *Visual Ref:* See 0:08 in source video. The yellow "Tops Hunted" pad shows a pie-slice animation filling up the square as time passes.
+
+
+
+**Interaction Logic:**
+
+* **Toggle:** Tapping a pad starts that loop.
+* **Mutually Exclusive Columns:** Only *one* pad per vertical column can be active at a time. Tapping a new pad in the same column queues it to start at the next quantization point (e.g., next bar), replacing the currently playing pad.
+* **Polyphony:** Multiple pads across *different* columns can play simultaneously.
+
+#### **4. Feature: Sequencer Timeline (View 'Seq')**
+
+**Layout:**
+
+* **Left Sidebar (Track Headers):** Fixed column displaying the Track icon/Color strip for every instrument row.
+* **Main Area:** Horizontally scrollable timeline grid.
+* **X-Axis:** Time (Bars 1, 2, 3...).
+* **Y-Axis:** Instrument Tracks.
+
+
+
+**Component: Timeline Block**
+
+* Represents a triggered loop instance.
+* **Visuals:** Solid colored rectangle (matching Track Color) with rounded corners.
+* **Labels:** Displays the name of the pattern inside the block (e.g., "Kick Crises").
+* **Variation Styles:** Some blocks may have diagonal hash marks (visual indication of a specific state, mute, or variation).
+
+**Interaction Logic:**
+
+* **Playhead:** A vertical white line traverses the grid from left to right during playback.
+* **Automation Toggle:** A button with a bezier-curve icon allows switching to an automation editing view (likely overlaying volume/filter curves on the tracks).
+* **Scrolling:** Synchronized scrolling; Sidebar stays pinned while timeline scrolls horizontally.
+
+#### **5. Technical Implementation Notes (for Code Generation)**
+
+* **State Management:** Needs a robust state manager (like Redux, Bloc, or Provider) to handle the `isPlaying`, `currentBar`, and `activePad[trackIndex]` states.
+* **Audio Engine:** The radial animations must be tightly synced to the audio engine's callback (tick) to ensure the visual "pie wipe" matches the beat exactly.
+* **Grid Rendering:** For the Sequencer view, use a specialized list view (like a Virtualized List or Custom Painter) rather than standard DOM/View nodes if performance is a concern with many blocks.
+
+To give the other instance a truly "full picture" for accurate recreation, you should add these specific deep-dive details. These cover the subtle UI elements, the "Drum" view (which was brief but distinct), and specific icon usage that gives the app its unique "vibe."
+
+### **Addendum: Deep-Dive Technical Specifications**
+
+#### **6. Secondary View: The "Drum" Pattern Editor (Timestamp 0:39)**
+
+* **Visual Structure:** This is a distinct sub-view separate from the Loop Matrix.
+* **Layout:** A step-sequencer grid.
+* **Rows:** Dedicated to individual drum sounds (Kick, Clap, Hi-hat, Perc).
+* **Cells:** Rectangular toggle buttons.
+* **Active State:** When a step is active, it displays a centrally aligned **Icon** rather than just a solid color.
+
+
+* **Specific Iconography:**
+* **Djembe/Drum Icon:** Used for percussion/kick hits.
+* **Clapping Hands Icon:** Used for clap/snare tracks.
+* **Star/Sparkle (Four-point) Icon:** Used for high-frequency elements (tops/hats).
+
+
+* **Coloring:** The icons match the track color (e.g., Salmon Red for kicks, Yellow for tops) against a dark background, or vice-versa.
+
+#### **7. Detailed Icon System (Loop View)**
+
+Each instrument pad in the main grid isn't just text; it uses a specific **left-aligned icon** to aid quick visual scanning.
+
+* **Kick/Clap:** (Implied/Simple shapes).
+* **Tops/Perc:** A circle composed of dots (indicating granular/scattered sounds).
+* **Bass:** A solid, heavy waveform or speaker-like icon.
+* **Chords:** A layout of 3-4 vertical bars or dots (representing polyphony).
+* **Vocal:** A standard microphone icon.
+* **FX:** A "magic wand" or sparkles icon.
+
+#### **8. Sequencer "Texture" & State Indicators**
+
+* **Hatched Texture:** In the Sequencer Timeline (see 1:07), some blocks are not solid colors but feature **diagonal black hatching/stripes**.
+* *Implementation Note:* This likely represents a specific state, such as a "Muted" clip, a "Ghost" clip (reference only), or a clip that is currently being edited.
+
+
+#### **9. Naming Convention Logic**
+
+* **Pattern:** The text labels follow a strict `[Instrument Name] [Adjective/Verb]` structure.
+* *Examples:* "Clap Eventual", "Bass Hunted", "Chords Fallen", "Tops Glittering".
+* *Design Note:* The font weight is often **Bold** for the Instrument and **Regular/Light** for the adjective, creating a visual hierarchy within the button text itself.
+
+
+
+#### **10. Transition & Motion Physics**
+
+* **Timeline Scrolling:** The playback cursor (vertical white line) stays relatively centered or moves smoothly while the *grid content* scrolls behind it (or the cursor moves across pages). The movement is linear and frame-synced.
+* **Pad "Queue" Behavior:** (Inferred) Since this is a quantized loop launcher, tapping a pad that isn't currently playing should likely initiate a "flashing" or "pulsing" animation until the next bar starts (the "global quantization" point), at which point it switches to solid colors and the radial wipe begins.
+
+
+Here is the technical specification for the Sequencer / Timeline View shown in the video.
+
+Feature Specification: Linear Sequencer Timeline (Tab: 'Seq')
+Overview The 'Seq' view is a horizontal linear arrangement timeline. It allows the user to paint pattern blocks onto a time grid to construct a full song. It introduces a split-pane layout with a sticky sidebar and a scrollable canvas.
+
+1. Layout Structure
+Container: FlexRow or Split View.
+
+Left Pane (Track Headers): Fixed width (approx 60dp). Sticky (does not scroll horizontally). Vertical scroll is synced with the main timeline.
+
+Right Pane (The Timeline): Horizontally scrollable area. Vertical scroll is synced with the Track Headers.
+
+2. Left Sidebar: Track Headers
+Visuals: A vertical stack of square/rectangular containers.
+
+Coloring: Each header background matches the specific Track Color (Red for Kick, Orange for Clap, etc.) defined in the Loop Matrix.
+
+Content:
+
+Icon Only: No text labels. A white, centered icon representing the instrument (Kick Drum, Hands, Sparkle, Waveform, Microphone, etc.).
+
+Z-Index: High. It sits above the timeline scroll to ensure tracks are always identified.
+
+3. Top Ruler (Time Axis)
+Position: Fixed at the top of the Timeline pane (below the main transport bar).
+
+Visuals: Dark grey background (#2C2C2C).
+
+Markers:
+
+Bar Numbers: White integers (1, 2, 3...) indicating the start of each measure.
+
+Grid Lines: Vertical lines extend down through the entire timeline.
+
+Bar Line: Solid, higher opacity.
+
+Beat Line: Faint/dotted (implied, visible as snap points).
+
+4. Main Timeline Content (The Clips)
+Grid: Rows correspond to Tracks; Columns correspond to Time.
+
+Component: The Arrangement Block (Clip)
+
+Shape: Rounded rectangle (Border radius ~6px).
+
+Color: Solid fill matching the Track Color.
+
+Label: White text centered or left-aligned inside the block (e.g., "Kick Crises", "Tops Hunted").
+
+Sizing: Width is determined by duration (e.g., 4 bars wide).
+
+Visual State - "Hatched" (See 1:07):
+
+Some blocks display a diagonal striped pattern (black diagonal lines overlaying the color).
+
+Function: This represents a Muted clip or a clip in a specific "Deactivated" state.
+
+Drag & Drop (Implicit): The UI implies these blocks can be moved or resized, though the video shows playback only.
+
+5. Secondary Toolbar (Sub-Header)
+Location: Appears directly below the main Transport bar when in 'Seq' mode.
+
+Left Group (History):
+
+Undo: Curved arrow pointing left.
+
+Redo: Curved arrow pointing right.
+
+Right Group (Tools):
+
+Automation Mode: An icon depicting a Bezier curve/nodes. Toggling this likely switches the clip view to a line-graph view for volume/filter changes.
+
+Snap/Quantize: (Likely the magnet icon if visible, though obscured in parts).
+
+6. Playhead Behavior
+Visual: A thin, solid white vertical line spanning the entire height of the timeline.
+
+Motion: Moves smoothly from left to right.
+
+Auto-Scroll: If the playhead reaches the right edge of the visible screen, the timeline likely scrolls automatically to follow it (Page-turn or smooth follow).
+
+Summary of Differences ("Loop" vs "Seq")
+Loop View: Trigger based. Grid of squares. Focus on improvisation.
+
+Seq View: Timeline based. Long horizontal rectangles. Focus on structure.
+
+Colors: Consistent across both views (Track 1 is always Red, Track 2 is always Orange).

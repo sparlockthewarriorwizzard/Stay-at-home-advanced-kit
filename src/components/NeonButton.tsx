@@ -26,7 +26,7 @@ interface NeonButtonProps {
   disabled?: boolean;
 }
 
-const AnimatedTouchableOpacity = Animated.createAnimatedComponent(TouchableOpacity);
+const AnimatedView = Animated.View as any;
 
 export const NeonButton: React.FC<NeonButtonProps> = ({
   onPress,
@@ -73,19 +73,22 @@ export const NeonButton: React.FC<NeonButtonProps> = ({
   });
 
   return (
-    <AnimatedTouchableOpacity
+    <TouchableOpacity
       onPress={onPress}
       disabled={disabled}
-      style={[
-        styles.button,
-        { borderColor: color, shadowColor: color },
-        style,
-        animatedStyle,
-      ]}
       activeOpacity={0.7}
     >
-      <Text style={[styles.text, { color }, textStyle]}>{title}</Text>
-    </AnimatedTouchableOpacity>
+      <AnimatedView
+        style={[
+          styles.button,
+          { borderColor: color, shadowColor: color },
+          style,
+          animatedStyle,
+        ]}
+      >
+        <Text style={[styles.text, { color }, textStyle]}>{title}</Text>
+      </AnimatedView>
+    </TouchableOpacity>
   );
 };
 

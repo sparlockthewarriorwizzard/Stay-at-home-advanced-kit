@@ -1,9 +1,11 @@
-import { AudioPlayer } from 'expo-audio';
+import { createAudioPlayer, AudioPlayer } from 'expo-audio';
 import { Instrument, SoundKit } from '../../types/MusicTypes';
 
 export class AudioEngine {
   private static instance: AudioEngine;
-  private players: Map<string, AudioPlayer> = new Map();
+  // Map of instrument ID to a pool of players
+  private playerPools: Map<string, AudioPlayer[]> = new Map();
+  private readonly POOL_SIZE = 4; // Allow up to 4 overlapping sounds per instrument
 
   private constructor() {}
 
@@ -24,23 +26,33 @@ export class AudioEngine {
 
   /**
    * Loads an instrument into the engine.
-   * A unique key is generated based on the instrument ID to allow polyphony.
+   * Creates a pool of players for the instrument to allow polyphony.
    */
   public async loadInstrument(instrument: Instrument): Promise<void> {
     const key = instrument.id;
-    if (this.players.has(key)) {
+    if (this.playerPools.has(key)) {
       return;
     }
 
     try {
       const source = instrument.asset || instrument.uri;
+      
       if (!source) {
         throw new Error(`No asset or URI provided for instrument: ${instrument.name}`);
       }
 
-      // Instantiate player. updateInterval 100ms is standard for status updates.
-      const player = new AudioPlayer(source, 100);
-      this.players.set(key, player);
+      // Create a pool of players
+      const pool: AudioPlayer[] = [];
+      console.log(`[AudioEngine] Loading instrument: ${instrument.name}, Source: ${source}`);
+      
+      for (let i = 0; i < this.POOL_SIZE; i++) {
+        const player = createAudioPlayer(source, { updateInterval: 100 });
+        player.volume = 1.0; 
+        player.muted = false;
+        player.loop = false;
+        pool.push(player);
+      }
+      this.playerPools.set(key, pool);
     } catch (error) {
       console.error(`Error loading instrument ${instrument.name}:`, error);
       throw error;
@@ -49,16 +61,34 @@ export class AudioEngine {
 
   /**
    * Triggers a sound by its instrument ID.
+   * Finds the first available player in the pool or steals the oldest one.
    */
   public async playInstrument(instrumentId: string): Promise<void> {
-    const player = this.players.get(instrumentId);
-    if (player) {
+    const pool = this.playerPools.get(instrumentId);
+    if (pool && pool.length > 0) {
       try {
-        // For rapid triggering in a sequencer, we seek to 0 and play.
-        if (player.playing) {
-          player.seekTo(0);
+        const availablePlayer = pool.find(p => !p.playing);
+        const playerToUse = availablePlayer || pool[0]; 
+
+        console.log(`[AudioEngine] Triggering ${instrumentId}. Pool size: ${pool.length}, Reuse: ${!availablePlayer}`);
+
+        if (playerToUse.playing) {
+            try {
+                playerToUse.seekTo(0);
+            } catch (e) {
+                console.warn(`[AudioEngine] seekTo(0) failed`, e);
+            }
         }
-        player.play();
+        
+        playerToUse.play();
+        
+        // Optimization: Rotate the used player to the end of the list so we don't pick it again immediately
+        const index = pool.indexOf(playerToUse);
+        if (index > -1) {
+            pool.splice(index, 1);
+            pool.push(playerToUse);
+        }
+
       } catch (error) {
         console.error(`Error playing instrument ${instrumentId}:`, error);
       }
@@ -80,20 +110,26 @@ export class AudioEngine {
   }
 
   public stopAll(): void {
-    for (const player of this.players.values()) {
-      player.pause();
-      player.seekTo(0);
+    for (const pool of this.playerPools.values()) {
+        pool.forEach(player => {
+            if (player.playing) {
+                player.pause();
+                player.seekTo(0);
+            }
+        });
     }
   }
 
   public unloadAll(): void {
-    for (const [id, player] of this.players.entries()) {
-      try {
-        player.remove();
-      } catch (e) {
-        console.error(`Failed to remove player ${id}`, e);
-      }
+    for (const pool of this.playerPools.values()) {
+        pool.forEach(player => {
+            try {
+                player.remove();
+            } catch (e) {
+                 console.error(`Failed to remove player`, e);
+            }
+        });
     }
-    this.players.clear();
+    this.playerPools.clear();
   }
 }

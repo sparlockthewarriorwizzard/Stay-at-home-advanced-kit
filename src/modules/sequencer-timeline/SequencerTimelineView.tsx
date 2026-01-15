@@ -1,5 +1,5 @@
-import React, { useRef } from 'react';
-import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import React, { useRef, useEffect, useState } from 'react';
+import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
 import { COLORS } from '../../constants/Theme';
 import { TrackHeader } from './components/TrackHeader';
@@ -8,8 +8,12 @@ import { ArrangementClip } from './components/ArrangementClip';
 import { TRACK_DEFINITIONS } from '../../types/MusicTypes';
 import { SEQUENCER_CONFIG } from './constants/SequencerConfig';
 import { useLoopStore } from '../loop-board/LoopStore';
+import { useSequencerClock } from '../sequencer/useSequencerClock';
+import { SequencerToolbar } from './components/SequencerToolbar';
 
 const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
+const SCREEN_WIDTH = Dimensions.get('window').width;
+const SIDEBAR_WIDTH = 60;
 
 const getLabel = (trackName: string, patternId: string) => {
   const match = patternId.match(/(\d+)$/);
@@ -20,20 +24,70 @@ const getLabel = (trackName: string, patternId: string) => {
 };
 
 export const SequencerTimelineView: React.FC = () => {
-  const { arrangement } = useLoopStore(useShallow((state) => ({
+  const { arrangement, isPlaying, bpm } = useLoopStore(useShallow((state) => ({
     arrangement: state.arrangement,
+    isPlaying: state.isPlaying,
+    bpm: state.bpm,
   })));
 
   const rulerScrollRef = useRef<ScrollView>(null);
   const contentScrollRef = useRef<ScrollView>(null);
+  const [scrollX, setScrollX] = useState(0);
+
+  // Clock for Playhead
+  const { currentStep, start, stop, reset } = useSequencerClock({
+    bpm,
+    steps: SEQUENCER_CONFIG.BAR_COUNT * 16, // Total 16th notes
+  });
+
+  // Sync Clock with Store
+  useEffect(() => {
+    if (isPlaying) {
+        start();
+    } else {
+        stop();
+        // Optional: reset() if we want to go back to start on stop, 
+        // or keep position for pause. For now, let's pause.
+    }
+  }, [isPlaying, start, stop]);
+
+  // Auto-Scroll Logic
+  useEffect(() => {
+    if (!isPlaying) return;
+
+    // Calculate Playhead X position
+    const stepWidth = SEQUENCER_CONFIG.BAR_WIDTH / 16;
+    const playheadX = currentStep * stepWidth;
+
+    // Visible Area Calculation
+    const visibleStart = scrollX;
+    const visibleEnd = scrollX + (SCREEN_WIDTH - SIDEBAR_WIDTH);
+
+    // Page Turn: If playhead reaches the end of the visible area
+    if (playheadX > visibleEnd - 50) { // 50px buffer
+       const newScrollX = playheadX - 50;
+       contentScrollRef.current?.scrollTo({ x: newScrollX, animated: true });
+    }
+  }, [currentStep, isPlaying, scrollX]);
 
   const handleContentScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = event.nativeEvent.contentOffset.x;
+    setScrollX(x);
     rulerScrollRef.current?.scrollTo({ x, animated: false });
   };
 
+  const stepWidth = SEQUENCER_CONFIG.BAR_WIDTH / 16;
+  const playheadLeft = currentStep * stepWidth;
+
   return (
     <View style={styles.container}>
+      {/* Secondary Toolbar */}
+      <SequencerToolbar 
+        onUndo={() => console.log('Undo')} 
+        onRedo={() => console.log('Redo')} 
+        onToggleAutomation={() => console.log('Automation')} 
+      />
+
       {/* Top Fixed Area: Spacer + Ruler */}
       <View style={styles.headerRow}>
         {/* Spacer for Sidebar */}
@@ -48,6 +102,8 @@ export const SequencerTimelineView: React.FC = () => {
             showsHorizontalScrollIndicator={false}
           >
             <TimelineRuler />
+             {/* Playhead in Ruler (Optional, adds nice visual) */}
+             <View style={[styles.playheadRulerMarker, { left: playheadLeft }]} />
           </ScrollView>
         </View>
       </View>
@@ -97,6 +153,11 @@ export const SequencerTimelineView: React.FC = () => {
                    </View>
                  );
                })}
+
+               {/* Playhead Line */}
+               {/* We render it here so it scrolls with content */}
+               <View style={[styles.playheadLine, { left: playheadLeft }]} />
+
             </View>
           </ScrollView>
         </View>
@@ -157,6 +218,33 @@ const styles = StyleSheet.create({
     color: '#666',
     fontSize: 12,
     margin: 20,
+  },
+  playheadLine: {
+    position: 'absolute',
+    top: 0,
+    bottom: 0,
+    width: 2,
+    backgroundColor: '#FFF',
+    zIndex: 999,
+    shadowColor: '#FFF',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.8,
+    shadowRadius: 5,
+  },
+  playheadRulerMarker: {
+    position: 'absolute',
+    bottom: 0,
+    width: 0,
+    height: 0,
+    borderLeftWidth: 6,
+    borderRightWidth: 6,
+    borderBottomWidth: 10,
+    borderStyle: 'solid',
+    backgroundColor: 'transparent',
+    borderLeftColor: 'transparent',
+    borderRightColor: 'transparent',
+    borderBottomColor: '#FFF', // Arrow pointing up
+    marginLeft: -5, // Center it
   },
 });
 

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ActivityIndicator, ScrollView } from 'react-native';
 import { Ionicons } from '@expo/vector-icons';
 import { useAffirmation } from './useAffirmation';
@@ -25,15 +25,7 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
         setGoalText,
         isGenerating,
         aiResponse,
-        isRecording,
-        isPlaying,
-        audioUri,
-        isSaving,
         handleGenerate,
-        startRecording,
-        stopRecording,
-        playSound,
-        handleSave,
         reset,
     } = useAffirmation({ service, onSuccess });
 
@@ -75,6 +67,7 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
                 </View>
             ) : (
                 <View style={styles.resultContainer}>
+                    {/* Affirmation Card */}
                     <Text style={styles.sectionTitle}>Your Affirmation</Text>
                     <View style={styles.card}>
                         <Text style={[styles.affirmationText, dynamicStyles.affirmationText]}>
@@ -82,6 +75,7 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
                         </Text>
                     </View>
 
+                    {/* Action Steps */}
                     <Text style={styles.sectionTitle}>Action Steps</Text>
                     {aiResponse.steps.map((step, index) => (
                         <View key={index} style={styles.stepItem}>
@@ -90,42 +84,17 @@ export const AffirmationRecorder: React.FC<AffirmationRecorderProps> = ({
                         </View>
                     ))}
 
-                    <Text style={styles.sectionTitle}>Record It</Text>
                     <Text style={styles.instructionText}>
-                        Read the affirmation aloud to reinforce it.
+                        Now, let's create a soundtrack for your success.
                     </Text>
 
-                    <View style={styles.recordingControls}>
-                        {isRecording ? (
-                            <TouchableOpacity style={styles.recordButtonActive} onPress={stopRecording}>
-                                <Ionicons name="stop" size={32} color="#fff" />
-                            </TouchableOpacity>
-                        ) : (
-                            <TouchableOpacity style={[styles.recordButton, dynamicStyles.recordButton]} onPress={startRecording}>
-                                <Ionicons name="mic" size={32} color="#fff" />
-                            </TouchableOpacity>
-                        )}
-
-                        {audioUri && !isRecording && (
-                            <TouchableOpacity style={styles.playButton} onPress={playSound}>
-                                <Ionicons name={isPlaying ? 'volume-high' : 'play'} size={32} color="#000" />
-                            </TouchableOpacity>
-                        )}
-                    </View>
-
-                    {audioUri && (
-                        <TouchableOpacity
-                            style={[styles.button, dynamicStyles.button, isSaving && styles.disabledButton]}
-                            onPress={handleSave}
-                            disabled={isSaving}
-                        >
-                            {isSaving ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <Text style={styles.buttonText}>Save & Finish</Text>
-                            )}
-                        </TouchableOpacity>
-                    )}
+                    <TouchableOpacity
+                        style={[styles.button, dynamicStyles.button]}
+                        onPress={() => onSuccess && onSuccess(aiResponse.affirmation)} // Pass affirmation text instead of audio URI
+                    >
+                        <Text style={styles.buttonText}>Create Music Track</Text>
+                        <Ionicons name="arrow-forward" size={20} color="#fff" style={{marginLeft: 8}} />
+                    </TouchableOpacity>
 
                     <TouchableOpacity style={styles.secondaryButton} onPress={reset}>
                         <Text style={[styles.secondaryButtonText, { color: secondaryColor }]}>Start Over</Text>
@@ -142,12 +111,12 @@ const styles = StyleSheet.create({
         backgroundColor: '#000', // Dark background
     },
     content: {
-        padding: 24,
+        padding: 16,
     },
     headerTitle: {
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: 'bold',
-        marginBottom: 24,
+        marginBottom: 16,
         color: '#fff',
     },
     label: {
@@ -195,15 +164,16 @@ const styles = StyleSheet.create({
         backgroundColor: '#1a1a1a',
         padding: 24,
         borderRadius: 16,
-        marginBottom: 8,
+        marginBottom: 24, // Increased spacing
         borderWidth: 1,
         borderColor: '#333',
     },
     affirmationText: {
-        fontSize: 20,
+        fontSize: 24, // Larger text
+        fontWeight: 'bold',
         fontStyle: 'italic',
         textAlign: 'center',
-        lineHeight: 28,
+        lineHeight: 32,
     },
     stepItem: {
         flexDirection: 'row',
@@ -225,7 +195,7 @@ const styles = StyleSheet.create({
     instructionText: {
         fontSize: 16,
         color: '#888',
-        marginBottom: 24,
+        marginBottom: 12,
         lineHeight: 22,
     },
     recordingControls: {
@@ -234,11 +204,28 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 32,
         gap: 24,
+        position: 'relative',
+    },
+    countdownOverlay: {
+        position: 'absolute',
+        zIndex: 10,
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 100,
+        height: 100,
+    },
+    countdownText: {
+        fontSize: 48,
+        fontWeight: '900',
+        color: '#fff',
+        textShadowColor: 'rgba(0,0,0,0.8)',
+        textShadowOffset: { width: 1, height: 1 },
+        textShadowRadius: 5,
     },
     recordButton: {
-        width: 72,
-        height: 72,
-        borderRadius: 36,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         justifyContent: 'center',
         alignItems: 'center',
         elevation: 5,
@@ -248,9 +235,9 @@ const styles = StyleSheet.create({
         shadowRadius: 4.65,
     },
     recordButtonActive: {
-        width: 72,
-        height: 72,
-        borderRadius: 36,
+        width: 80,
+        height: 80,
+        borderRadius: 40,
         backgroundColor: '#c0392b',
         borderWidth: 4,
         borderColor: '#fab1a0',

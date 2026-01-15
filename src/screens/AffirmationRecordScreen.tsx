@@ -1,5 +1,7 @@
-import React from 'react';
-import { StyleSheet, SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { StyleSheet } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { AffirmationRecorder } from '../modules/affirmation-flow/AffirmationRecorder';
 import { AffirmationService } from '../modules/affirmation-flow/AffirmationService';
 import { useNavigation } from '@react-navigation/native';
@@ -14,9 +16,9 @@ const affirmationService = new AffirmationService('https://your-api-url.com');
 const AffirmationRecordScreen: React.FC = () => {
   const navigation = useNavigation<NavigationProp>();
 
-  const handleSuccess = (audioUri: string) => {
-    // Navigate to the next part of the flow (Step Sequencer)
-    navigation.navigate('Sequencer', { audioUri });
+  const handleSuccess = (affirmationText: string) => {
+    // Navigate to the next part of the flow (Loop Board)
+    navigation.navigate('LoopBoard', { affirmationText });
   };
 
   return (

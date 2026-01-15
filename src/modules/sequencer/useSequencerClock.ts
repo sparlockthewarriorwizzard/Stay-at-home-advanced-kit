@@ -32,8 +32,16 @@ export const useSequencerClock = ({
   const nextNoteTimeRef = useRef<number>(0);
   const currentStepRef = useRef<number>(0);
   const timerIdRef = useRef<NodeJS.Timeout | null>(null);
+  const isPlayingRef = useRef<boolean>(false); // Ref to track playing state inside scheduler
+
   const lookahead = 25.0; // How frequently to call scheduling function (in milliseconds)
   const scheduleAheadTime = 0.1; // How far ahead to schedule audio (sec)
+
+  // We need to access the latest onStep callback without breaking the closure
+  const onStepRef = useRef(onStep);
+  useEffect(() => {
+    onStepRef.current = onStep;
+  }, [onStep]);
 
   const nextNote = useCallback(() => {
     const secondsPerStep = bpmToSecondsPerStep(bpm);
@@ -43,10 +51,10 @@ export const useSequencerClock = ({
     currentStepRef.current = (currentStepRef.current + 1) % steps;
 
     setCurrentStep(currentStepRef.current);
-    if (onStep) {
-        onStep(currentStepRef.current);
+    if (onStepRef.current) {
+        onStepRef.current(currentStepRef.current);
     }
-  }, [bpm, steps, onStep]);
+  }, [bpm, steps]);
 
   const scheduler = useCallback(() => {
     // while there are notes that will need to play before the next interval,
@@ -62,25 +70,28 @@ export const useSequencerClock = ({
       nextNote();
     }
 
-    if (isPlaying) {
+    if (isPlayingRef.current) {
         timerIdRef.current = setTimeout(scheduler, lookahead);
     }
-  }, [isPlaying, nextNote, scheduleAheadTime]);
+  }, [nextNote, scheduleAheadTime]);
 
   const start = useCallback(() => {
-    if (isPlaying) {return;}
+    if (isPlayingRef.current) {return;}
 
     // Initialize timing
     currentStepRef.current = -1; // Start before 0 so first step is 0
     nextNoteTimeRef.current = Date.now() / 1000;
 
+    isPlayingRef.current = true;
     setIsPlaying(true);
+    
     timerIdRef.current = setTimeout(() => {
         scheduler();
     }, 0);
-  }, [isPlaying, scheduler]);
+  }, [scheduler]);
 
   const stop = useCallback(() => {
+    isPlayingRef.current = false;
     setIsPlaying(false);
     if (timerIdRef.current) {
       clearTimeout(timerIdRef.current);
@@ -97,6 +108,7 @@ export const useSequencerClock = ({
   // Cleanup
   useEffect(() => {
     return () => {
+      isPlayingRef.current = false;
       if (timerIdRef.current) {
         clearTimeout(timerIdRef.current);
       }

@@ -1,8 +1,8 @@
 # Track Plan: Implement Step Sequencer Core & Audio Engine
 
 ## Phase 1: Audio Engine ## Phase 1: Audio Engine & Clock Logic Clock Logic [checkpoint: 9317329]
-- [~] Task: Create `src/modules/sequencer/AudioEngine.ts` to manage `Sound` loading and playback.
-- [~] Task: Implement a precision timer/scheduler hook (`useSequencerClock`) to handle BPM and step progression (aiming for <20ms drift).
+- [x] Task: Create `src/modules/sequencer/AudioEngine.ts` to manage `Sound` loading and playback.
+- [x] Task: Implement a precision timer/scheduler hook (`useSequencerClock`) to handle BPM and step progression (aiming for <20ms drift).
 - [x] Task: Write unit tests for the clock logic (verifying BPM to MS conversion and step cycling). (f5385a7)
 - [x] Task: Conductor - User Manual Verification 'Audio Engine & Clock Logic' (Protocol in workflow.md)
 
@@ -14,8 +14,8 @@
 - [x] Task: Conductor - User Manual Verification 'Grid UI Component' (Protocol in workflow.md)
 
 ## Phase 3: Integration ## Phase 3: Integration & Sample Triggering Sample Triggering [checkpoint: 6e5280e]
-- [~] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
-- [ ] Task: Update `AffirmationRecordScreen` to navigate to `SequencerScreen` (passing the audio URI).
+- [x] Task: Create `src/screens/SequencerScreen.tsx` and register it in `RootNavigator`.
+- [x] Task: Update `AffirmationRecordScreen` to navigate to `SequencerScreen` (passing the audio URI).
 - [x] Task: Integrate `AudioEngine` with `SequencerGrid` - triggering the sample when the playhead hits an active step. (merged)
 - [x] Task: Add Play/Stop and BPM controls to the screen. (28e2c53)
 - [x] Task: Conductor - User Manual Verification 'Integration & Sample Triggering' (Protocol in workflow.md)
