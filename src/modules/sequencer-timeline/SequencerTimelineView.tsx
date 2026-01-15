@@ -3,8 +3,17 @@ import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollE
 import { COLORS } from '../../constants/Theme';
 import { TrackHeader } from './components/TrackHeader';
 import { TimelineRuler } from './components/TimelineRuler';
+import { ArrangementClip } from './components/ArrangementClip';
 import { TRACK_DEFINITIONS } from '../../types/MusicTypes';
 import { SEQUENCER_CONFIG } from './constants/SequencerConfig';
+
+const MOCK_CLIPS = [
+  { id: '1', trackId: 'track1', startBar: 0, duration: 4, label: 'Kick Main', isMuted: false },
+  { id: '2', trackId: 'track2', startBar: 0, duration: 4, label: 'Clap Regular', isMuted: false },
+  { id: '3', trackId: 'track3', startBar: 4, duration: 4, label: 'Tops Hype', isMuted: false },
+  { id: '4', trackId: 'track1', startBar: 4, duration: 4, label: 'Kick Drop', isMuted: true }, // Hatched example
+  { id: '5', trackId: 'track5', startBar: 2, duration: 8, label: 'Chords Ambient', isMuted: false },
+];
 
 export const SequencerTimelineView: React.FC = () => {
   const rulerScrollRef = useRef<ScrollView>(null);
@@ -55,10 +64,29 @@ export const SequencerTimelineView: React.FC = () => {
             scrollEventThrottle={16}
             showsHorizontalScrollIndicator={true}
           >
-            {/* Grid Lines / Background */}
+            {/* Grid Content */}
             <View style={styles.gridBackground}>
-               {/* Temporary placeholder for grid content */}
-               <Text style={styles.placeholderText}>Grid Content Area</Text>
+               {/* Render Mock Clips */}
+               {MOCK_CLIPS.map(clip => {
+                 const trackIndex = TRACK_DEFINITIONS.findIndex(t => t.id === clip.trackId);
+                 if (trackIndex === -1) return null;
+
+                 const trackColor = TRACK_DEFINITIONS[trackIndex].color || '#CCC';
+                 const top = trackIndex * SEQUENCER_CONFIG.TRACK_HEIGHT;
+                 const left = clip.startBar * SEQUENCER_CONFIG.BAR_WIDTH;
+                 const width = clip.duration * SEQUENCER_CONFIG.BAR_WIDTH;
+
+                 return (
+                   <View key={clip.id} style={{ position: 'absolute', top, left }}>
+                     <ArrangementClip 
+                        color={trackColor} 
+                        label={clip.label} 
+                        width={width} 
+                        isMuted={clip.isMuted}
+                     />
+                   </View>
+                 );
+               })}
             </View>
           </ScrollView>
         </View>
