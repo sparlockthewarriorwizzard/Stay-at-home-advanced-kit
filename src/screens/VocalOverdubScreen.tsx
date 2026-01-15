@@ -1,5 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
+import { useFrameCallback } from 'react-native-reanimated';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useShallow } from 'zustand/react/shallow';
 import { RootStackParamList } from '../navigation/RootNavigator';
@@ -8,6 +9,7 @@ import { useAffirmation } from '../modules/affirmation-flow/useAffirmation';
 import { NeonButton } from '../components/NeonButton';
 import { Ionicons } from '@expo/vector-icons';
 import { useLoopStore } from '../modules/loop-board/LoopStore';
+import { AudioEngine } from '../modules/audio-engine/AudioEngine';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'VocalOverdub'>;
 
@@ -35,6 +37,7 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
   } = useAffirmation({ service: affirmationService });
 
   const [countdown, setCountdown] = useState<number | null>(null);
+  const [waitingForNextBar, setWaitingForNextBar] = useState(false);
 
   // Handle Recording Start (with Countdown)
   const handleRecordPress = () => {
@@ -56,15 +59,35 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
       timer = setTimeout(() => setCountdown(countdown - 1), 1000);
     } else if (countdown === 0) {
       setCountdown(null);
+      setWaitingForNextBar(true);
       
       // Start Backing Track
       setPlaying(true);
-
-      // Start Recording
-      startRecording();
     }
     return () => clearTimeout(timer);
   }, [countdown]);
+
+  // Precise Trigger Logic
+  const lastBarRef = useRef(-1);
+  useFrameCallback(() => {
+    if (!waitingForNextBar) {
+        lastBarRef.current = -1;
+        return;
+    }
+
+    const engine = AudioEngine.getInstance();
+    const barDuration = (60 / bpm) * 4;
+    const currentBar = Math.floor(engine.currentTime / barDuration);
+
+    // When we hit the START of the next bar (crossing boundary)
+    if (lastBarRef.current === -1) {
+        lastBarRef.current = currentBar;
+    } else if (currentBar > lastBarRef.current) {
+        // TRIGGER RECORDING
+        setWaitingForNextBar(false);
+        startRecording();
+    }
+  });
 
   // Cleanup on Unmount
   useEffect(() => {

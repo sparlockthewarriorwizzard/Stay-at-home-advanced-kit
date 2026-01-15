@@ -40,7 +40,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Sequencer & Lookahead Scheduler' (Protocol in workflow.md)
 
 ## Phase 4: Vocal Overdub & Alignment
-- [ ] **Task 7: Refactor `VocalOverdubScreen`**
+- [~] **Task 7: Refactor `VocalOverdubScreen`**
     - Implement sample-accurate recording start triggered by the audio clock.
     - Ensure backing loops and metronome are perfectly aligned with the recorded vocal buffer.
     - *Test:* Verify recorded audio aligns exactly with the backing track grid.
