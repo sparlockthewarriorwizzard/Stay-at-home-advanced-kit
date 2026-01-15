@@ -1,13 +1,13 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, ActivityIndicator, SafeAreaView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, StyleSheet, TouchableOpacity, SafeAreaView } from 'react-native';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
+import { useShallow } from 'zustand/react/shallow';
 import { RootStackParamList } from '../navigation/RootNavigator';
 import { AffirmationService } from '../modules/affirmation-flow/AffirmationService';
 import { useAffirmation } from '../modules/affirmation-flow/useAffirmation';
-import { AudioEngine } from '../modules/sequencer/AudioEngine';
-import { useSequencerClock } from '../modules/sequencer/useSequencerClock';
 import { NeonButton } from '../components/NeonButton';
 import { Ionicons } from '@expo/vector-icons';
+import { useLoopStore } from '../modules/loop-board/LoopStore';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'VocalOverdub'>;
 
@@ -15,7 +15,14 @@ type Props = NativeStackScreenProps<RootStackParamList, 'VocalOverdub'>;
 const affirmationService = new AffirmationService('https://your-api-url.com');
 
 const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
-  const { affirmationText, steps: patternSteps, kitId, bpm } = route.params;
+  const { affirmationText } = route.params;
+
+  // Global Loop Store
+  const { isPlaying, setPlaying, bpm } = useLoopStore(useShallow((state) => ({
+      isPlaying: state.isPlaying,
+      setPlaying: state.setPlaying,
+      bpm: state.bpm,
+  })));
 
   // Recording State
   const {
@@ -24,38 +31,20 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
     recordedUri,
     isRecording,
     playRecording,
-    stopPlaying: stopPreview,
     reset: resetRecording,
   } = useAffirmation({ service: affirmationService });
 
   const [countdown, setCountdown] = useState<number | null>(null);
-  const [isPlayingBacking, setIsPlayingBacking] = useState(false);
-
-  // Sequencer Logic for Backing Track
-  // We re-use the clock hook to drive the sequencer
-  const onStepTrigger = (stepIndex: number) => {
-    const engine = AudioEngine.getInstance();
-    Object.keys(patternSteps).forEach(instrumentId => {
-        if (patternSteps[instrumentId] && patternSteps[instrumentId][stepIndex]) {
-            engine.playInstrument(instrumentId);
-        }
-    });
-  };
-
-  const { start: startClock, stop: stopClock, reset: resetClock } = useSequencerClock({
-    bpm,
-    onStep: onStepTrigger,
-  });
 
   // Handle Recording Start (with Countdown)
   const handleRecordPress = () => {
     if (isRecording) {
       // STOP EVERYTHING
       stopRecording();
-      stopClock();
-      setIsPlayingBacking(false);
+      setPlaying(false);
     } else {
       // START COUNTDOWN
+      setPlaying(false); // Ensure silence before countdown
       setCountdown(3);
     }
   };
@@ -69,8 +58,7 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
       setCountdown(null);
       
       // Start Backing Track
-      startClock();
-      setIsPlayingBacking(true);
+      setPlaying(true);
 
       // Start Recording
       startRecording();
@@ -81,14 +69,14 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
   // Cleanup on Unmount
   useEffect(() => {
       return () => {
-          stopClock();
+          // Stop playback if user leaves screen while recording
+          if (isPlaying) setPlaying(false);
       };
   }, []);
 
   const handleFinish = () => {
-      // Here we would mix the tracks or save the project
-      // For now, navigate Home or to a "Result" screen
-      navigation.navigate('MainTabs'); 
+      // For now, just go back to the board
+      navigation.goBack(); 
   };
 
   return (
@@ -109,13 +97,15 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
             <Text style={styles.affirmationText}>"{affirmationText}"</Text>
         </View>
 
-        {/* Visualizer / Status */}
+        {/* Status / BPM */}
         <View style={styles.statusContainer}>
              {isRecording && (
                  <Text style={styles.recordingText}>Recording...</Text>
              )}
-             {countdown !== null && (
+             {countdown !== null ? (
                  <Text style={styles.countdownText}>{countdown}</Text>
+             ) : (
+                <Text style={styles.bpmText}>{bpm} BPM</Text>
              )}
         </View>
 
@@ -153,7 +143,7 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
                         </TouchableOpacity>
 
                         <NeonButton 
-                            title="Finish Track" 
+                            title="Back to Board" 
                             onPress={handleFinish} 
                             color="#2ecc71" 
                             style={{flex: 1, marginLeft: 16}} 
@@ -220,6 +210,11 @@ const styles = StyleSheet.create({
       fontSize: 80,
       fontWeight: '900',
       color: '#fff',
+  },
+  bpmText: {
+      fontSize: 16,
+      color: '#666',
+      fontWeight: 'bold',
   },
   recordingText: {
       color: '#e74c3c',
