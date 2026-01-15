@@ -1,21 +1,29 @@
 import React, { useRef } from 'react';
 import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent } from 'react-native';
+import { useShallow } from 'zustand/react/shallow';
 import { COLORS } from '../../constants/Theme';
 import { TrackHeader } from './components/TrackHeader';
 import { TimelineRuler } from './components/TimelineRuler';
 import { ArrangementClip } from './components/ArrangementClip';
 import { TRACK_DEFINITIONS } from '../../types/MusicTypes';
 import { SEQUENCER_CONFIG } from './constants/SequencerConfig';
+import { useLoopStore } from '../loop-board/LoopStore';
 
-const MOCK_CLIPS = [
-  { id: '1', trackId: 'track1', startBar: 0, duration: 4, label: 'Kick Main', isMuted: false },
-  { id: '2', trackId: 'track2', startBar: 0, duration: 4, label: 'Clap Regular', isMuted: false },
-  { id: '3', trackId: 'track3', startBar: 4, duration: 4, label: 'Tops Hype', isMuted: false },
-  { id: '4', trackId: 'track1', startBar: 4, duration: 4, label: 'Kick Drop', isMuted: true }, // Hatched example
-  { id: '5', trackId: 'track5', startBar: 2, duration: 8, label: 'Chords Ambient', isMuted: false },
-];
+const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
+
+const getLabel = (trackName: string, patternId: string) => {
+  const match = patternId.match(/(\d+)$/);
+  if (!match) return patternId;
+  const index = parseInt(match[1], 10) - 1;
+  const variation = VARIATIONS[index] || '';
+  return `${trackName} ${variation}`;
+};
 
 export const SequencerTimelineView: React.FC = () => {
+  const { arrangement } = useLoopStore(useShallow((state) => ({
+    arrangement: state.arrangement,
+  })));
+
   const rulerScrollRef = useRef<ScrollView>(null);
   const contentScrollRef = useRef<ScrollView>(null);
 
@@ -66,21 +74,23 @@ export const SequencerTimelineView: React.FC = () => {
           >
             {/* Grid Content */}
             <View style={styles.gridBackground}>
-               {/* Render Mock Clips */}
-               {MOCK_CLIPS.map(clip => {
+               {/* Render Clips from Store */}
+               {arrangement.map(clip => {
                  const trackIndex = TRACK_DEFINITIONS.findIndex(t => t.id === clip.trackId);
                  if (trackIndex === -1) return null;
 
-                 const trackColor = TRACK_DEFINITIONS[trackIndex].color || '#CCC';
+                 const trackDef = TRACK_DEFINITIONS[trackIndex];
+                 const trackColor = trackDef.color || '#CCC';
                  const top = trackIndex * SEQUENCER_CONFIG.TRACK_HEIGHT;
                  const left = clip.startBar * SEQUENCER_CONFIG.BAR_WIDTH;
                  const width = clip.duration * SEQUENCER_CONFIG.BAR_WIDTH;
+                 const label = getLabel(trackDef.name, clip.patternId);
 
                  return (
                    <View key={clip.id} style={{ position: 'absolute', top, left }}>
                      <ArrangementClip 
                         color={trackColor} 
-                        label={clip.label} 
+                        label={label} 
                         width={width} 
                         isMuted={clip.isMuted}
                      />
