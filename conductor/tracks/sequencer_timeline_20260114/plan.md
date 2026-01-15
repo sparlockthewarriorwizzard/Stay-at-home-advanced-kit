@@ -25,7 +25,7 @@
     -   Implement horizontal scrolling logic.
     -   *Spec:* Dark grey background, white integers, solid bar lines, faint beat lines.
 
-- [ ] **Task 4: Implement Arrangement Block (Clip) Renderer**
+- [x] **Task 4: Implement Arrangement Block (Clip) Renderer** (1c7efd3)
     -   Create `ArrangementClip` component.
     -   Visuals: Rounded rectangle, solid fill (Track Color), Label text.
     -   Implement "Hatched" state visual (diagonal stripes) for muted/ghost clips.
