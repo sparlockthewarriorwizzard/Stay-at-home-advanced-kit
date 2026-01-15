@@ -39,12 +39,12 @@
     - *Test:* Long-running sync test (3+ minutes) to ensure zero drift between visual playhead and audio.
 - [x] Task: Conductor - User Manual Verification 'Phase 3: Sequencer & Lookahead Scheduler' (Protocol in workflow.md)
 
-## Phase 4: Vocal Overdub & Alignment
-- [~] **Task 7: Refactor `VocalOverdubScreen`**
+## Phase 4: Vocal Overdub & Alignment [checkpoint: 24b0d08]
+- [x] **Task 7: Refactor `VocalOverdubScreen`**
     - Implement sample-accurate recording start triggered by the audio clock.
     - Ensure backing loops and metronome are perfectly aligned with the recorded vocal buffer.
     - *Test:* Verify recorded audio aligns exactly with the backing track grid.
-- [ ] Task: Conductor - User Manual Verification 'Phase 4: Vocal Overdub & Alignment' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 4: Vocal Overdub & Alignment' (Protocol in workflow.md)
 
 ## Phase 5: Final Optimization & EAS Build
 - [ ] **Task 8: Global Memory & Performance Audit**
