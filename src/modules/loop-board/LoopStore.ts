@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { AudioBuffer } from 'react-native-audio-api';
 import { COLORS } from '../../constants/Theme';
 import NativeLoopEngine from './NativeLoopEngine';
 
@@ -22,6 +23,7 @@ export interface ArrangementEvent {
 interface LoopStore {
   tracks: Record<string, TrackState>;
   arrangement: ArrangementEvent[];
+  buffers: Record<string, AudioBuffer>;
   isPlaying: boolean;
   bpm: number;
   
@@ -31,6 +33,7 @@ interface LoopStore {
   tickQuantization: () => void;
   addClip: (clip: ArrangementEvent) => void;
   removeClip: (id: string) => void;
+  setBuffers: (buffers: Record<string, AudioBuffer>) => void;
 }
 
 export const useLoopStore = create<LoopStore>((set, get) => ({
@@ -51,8 +54,12 @@ export const useLoopStore = create<LoopStore>((set, get) => ({
     { id: '4', trackId: 'track1', patternId: 'kick2', startBar: 4, duration: 4, isMuted: true },
     { id: '5', trackId: 'track5', patternId: 'chords1', startBar: 2, duration: 8 },
   ],
+  buffers: {},
   isPlaying: false,
   bpm: 86,
+
+  setBuffers: (buffers) => set({ buffers }),
+  // ... rest of actions remain similar for now
 
   toggleLoop: (trackId, loopId) => {
     const state = get();

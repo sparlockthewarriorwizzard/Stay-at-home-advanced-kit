@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -7,6 +7,7 @@ import {
   ScrollView,
   StatusBar,
 } from 'react-native';
+import { useFrameCallback } from 'react-native-reanimated';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { useShallow } from 'zustand/react/shallow';
@@ -24,13 +25,14 @@ type Props = NativeStackScreenProps<RootStackParamList, 'LoopBoard'>;
 const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
 
 const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
-  const { toggleLoop, isPlaying, setPlaying, tickQuantization, bpm } = useLoopStore(
+  const { toggleLoop, isPlaying, setPlaying, tickQuantization, bpm, setBuffers } = useLoopStore(
     useShallow((state) => ({
       toggleLoop: state.toggleLoop,
       isPlaying: state.isPlaying,
       setPlaying: state.setPlaying,
       tickQuantization: state.tickQuantization,
       bpm: state.bpm,
+      setBuffers: state.setBuffers,
     }))
   );
   const [isReady, setIsReady] = useState(false);
@@ -39,6 +41,7 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
   useEffect(() => {
     const init = async () => {
       await NativeLoopEngine.getInstance().loadAll();
+      setBuffers(NativeLoopEngine.getInstance().getLoadedBuffers());
       setIsReady(true);
     };
     init();
@@ -48,20 +51,24 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
     };
   }, []);
 
-  // Simple Quantization Clock (1 bar = 4 beats)
-  useEffect(() => {
-    if (!isPlaying) return;
+  // Precise Quantization Clock driven by hardware
+  const lastBarRef = useRef(-1);
+  useFrameCallback(() => {
+    if (!isPlaying) {
+        lastBarRef.current = -1;
+        return;
+    }
 
-    // Calculate interval for 1 bar (4 beats) at current BPM
-    // 60000ms / BPM = 1 beat. 1 bar = 4 beats.
-    const barInterval = (60000 / bpm) * 4;
-    
-    const interval = setInterval(() => {
-      tickQuantization();
-    }, barInterval);
+    const engine = AudioEngine.getInstance();
+    const barDuration = (60 / bpm) * 4;
+    const currentBar = Math.floor(engine.currentTime / barDuration);
 
-    return () => clearInterval(interval);
-  }, [isPlaying, bpm, tickQuantization]);
+    if (currentBar > lastBarRef.current) {
+        lastBarRef.current = currentBar;
+        // Trigger quantization at the exact bar boundary crossing
+        tickQuantization();
+    }
+  });
 
   const handlePadPress = (trackId: string, loopId: string) => {
     toggleLoop(trackId, loopId);

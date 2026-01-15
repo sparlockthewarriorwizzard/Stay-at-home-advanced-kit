@@ -14,12 +14,14 @@ import Animated, {
   Easing,
   cancelAnimation,
   withSequence,
+  useFrameCallback,
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { COLORS, BORDER_RADIUS, SPACING } from '../../../constants/Theme';
 import { useLoopStore } from '../LoopStore';
 import { useShallow } from 'zustand/react/shallow';
+import { AudioEngine } from '../../audio-engine/AudioEngine';
 
 const AnimatedPath = Animated.createAnimatedComponent(Path);
 
@@ -42,11 +44,6 @@ const ICON_MAP: Record<string, string> = {
   adds: 'music-clef-treble',
   fx: 'creation', // valid replacement for sparkles/wand
 };
-
-// 1 Bar at 120 BPM
-// 60000 / 120 = 500ms per beat.
-// 4 beats (1 bar) = 2000ms.
-const LOOP_DURATION_MS = 2000;
 
 // --- Worklet Helpers ---
 
@@ -81,36 +78,29 @@ export const LoopPad: React.FC<LoopPadProps> = ({
   onPress,
   color,
 }) => {
-  const { isActive, isQueued } = useLoopStore(
+  const { isActive, isQueued, bpm } = useLoopStore(
     useShallow((state) => {
         const track = state.tracks[trackId];
         return {
             isActive: track?.activeLoopId === loopId,
             isQueued: track?.queuedLoopId === loopId,
+            bpm: state.bpm,
         };
     })
   );
 
   const animatedProgress = useSharedValue(0);
 
-  useEffect(() => {
+  useFrameCallback(() => {
     if (isActive) {
-        // Reset to 0 ensuring fresh start
-        animatedProgress.value = 0;
-        // Start the autonomous animation on the UI thread
-        animatedProgress.value = withRepeat(
-            withTiming(1, {
-                duration: LOOP_DURATION_MS,
-                easing: Easing.linear,
-            }),
-            -1, // Infinite repeat
-            false // No reverse
-        );
+        const engine = AudioEngine.getInstance();
+        const barDuration = (60 / bpm) * 4;
+        // Drive progress from the hardware audio clock
+        animatedProgress.value = (engine.currentTime % barDuration) / barDuration;
     } else {
-        cancelAnimation(animatedProgress);
-        animatedProgress.value = withTiming(0, { duration: 200 });
+        animatedProgress.value = 0;
     }
-  }, [isActive]);
+  });
 
   const animatedContainerStyle = useAnimatedStyle(() => {
     // Pulse effect if queued

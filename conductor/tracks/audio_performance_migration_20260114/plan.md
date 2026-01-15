@@ -18,7 +18,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 1: Environment & Engine Setup' (Protocol in workflow.md)
 
 ## Phase 2: Loop Board Migration
-- [ ] **Task 3: Refactor `LoopStore` for Native Buffers**
+- [~] **Task 3: Refactor `LoopStore` for Native Buffers**
     - Update `LoopStore` to hold references to `AudioBuffer`s instead of URIs/IDs.
     - Implement preloading logic for the "Default" kit on app startup.
     - *Test:* Verify all buffers for the default kit are loaded and held in native memory.
