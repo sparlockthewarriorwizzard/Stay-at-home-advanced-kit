@@ -14,6 +14,9 @@ Able Music is a cross-platform mobile application (iOS & Android) that combines 
 
 ## Key Features & Differentiators
 *   **Rhythmic Affirmations:** The core differentiator is the combination of voice-recorded affirmations with a rhythmic step sequencer, turning spoken words into musical elements.
+*   **Dual-View Composition:**
+    *   **Loop Board:** A live performance matrix for triggering loops and patterns in real-time.
+    *   **Sequencer Timeline:** A linear arrangement view for constructing full songs on a timeline.
 *   **AI-Driven Content:** The app uses AI to generate specific affirmation text tailored to the user's stated goals, removing the friction of "what to say."
 *   **Professional Sound Library:** Users have access to a curated library of high-quality drum kits and musical sequences, ensuring their creations sound professional even without music theory knowledge.
 

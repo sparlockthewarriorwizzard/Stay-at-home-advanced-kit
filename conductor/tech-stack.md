@@ -13,7 +13,8 @@
 *   **AI Integration:** Custom API (as seen in `AffirmationService.ts`) for generating affirmations.
 
 ## Audio Infrastructure (High Performance)
-*   **Recording & Playback:** `expo-audio` (implemented for core affirmation flow) with future plans for low-latency native bridges (premium) if needed.
+*   **Recording & Playback:** `expo-audio` (implemented for core affirmation flow).
+*   **Loop Engine:** `expo-av` (via `NativeLoopEngine`) for concurrent loop playback, pitch correction, and basic synchronization.
 *   **Low-Latency Engine:** Requirement for JUCE or Google Oboe to achieve < 20ms latency on Android for the step sequencer.
 *   **Digital Signal Processing (DSP):**
     *   **Rubber Band Library:** For high-quality time-stretching and pitch-shifting without changing pitch.
