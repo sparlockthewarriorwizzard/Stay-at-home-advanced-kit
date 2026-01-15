@@ -4,7 +4,7 @@
 
 **Status:** PENDING
 
-## Phase 1: Environment & Engine Setup
+## Phase 1: Environment & Engine Setup [checkpoint: 9866247]
 - [x] **Task 1: Install and Configure `react-native-audio-api`**
     - Install `react-native-audio-api` and dependencies.
     - Configure `app.json` for New Architecture and permissions.
@@ -15,7 +15,7 @@
     - Implement `loadBuffer(uri)` for decoding audio into native memory.
     - Implement `playBuffer(buffer, time)` for scheduled playback.
     - *Test:* Unit tests for buffer loading and basic scheduling logic.
-- [ ] Task: Conductor - User Manual Verification 'Phase 1: Environment & Engine Setup' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 1: Environment & Engine Setup' (Protocol in workflow.md)
 
 ## Phase 2: Loop Board Migration
 - [ ] **Task 3: Refactor `LoopStore` for Native Buffers**
