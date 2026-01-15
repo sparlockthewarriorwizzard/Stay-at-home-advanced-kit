@@ -1,6 +1,7 @@
-import React, { useRef, useEffect, useState } from 'react';
+import React, { useRef, useEffect, useState, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView, NativeSyntheticEvent, NativeScrollEvent, Dimensions } from 'react-native';
 import { useShallow } from 'zustand/react/shallow';
+import Animated, { useAnimatedStyle, useSharedValue, useFrameCallback } from 'react-native-reanimated';
 import { COLORS } from '../../constants/Theme';
 import { TrackHeader } from './components/TrackHeader';
 import { TimelineRuler } from './components/TimelineRuler';
@@ -8,8 +9,9 @@ import { ArrangementClip } from './components/ArrangementClip';
 import { TRACK_DEFINITIONS } from '../../types/MusicTypes';
 import { SEQUENCER_CONFIG } from './constants/SequencerConfig';
 import { useLoopStore } from '../loop-board/LoopStore';
-import { useSequencerClock } from '../sequencer/useSequencerClock';
 import { SequencerToolbar } from './components/SequencerToolbar';
+import { useLookaheadScheduler, ScheduledNote } from '../audio-engine/useLookaheadScheduler';
+import { AudioEngine } from '../audio-engine/AudioEngine';
 
 const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
 const SCREEN_WIDTH = Dimensions.get('window').width;
@@ -24,51 +26,61 @@ const getLabel = (trackName: string, patternId: string) => {
 };
 
 export const SequencerTimelineView: React.FC = () => {
-  const { arrangement, isPlaying, bpm } = useLoopStore(useShallow((state) => ({
+  const { arrangement, isPlaying, bpm, buffers } = useLoopStore(useShallow((state) => ({
     arrangement: state.arrangement,
     isPlaying: state.isPlaying,
     bpm: state.bpm,
+    buffers: state.buffers,
   })));
 
   const rulerScrollRef = useRef<ScrollView>(null);
   const contentScrollRef = useRef<ScrollView>(null);
   const [scrollX, setScrollX] = useState(0);
 
-  // Clock for Playhead
-  const { currentStep, start, stop, reset } = useSequencerClock({
-    bpm,
-    steps: SEQUENCER_CONFIG.BAR_COUNT * 16, // Total 16th notes
+  // Map arrangement to scheduled notes for the audio engine
+  const scheduledNotes = useMemo<ScheduledNote[]>(() => {
+    const barDuration = (60 / bpm) * 4;
+    return arrangement
+      .filter(clip => !clip.isMuted && buffers[clip.patternId])
+      .map(clip => ({
+        time: clip.startBar * barDuration,
+        buffer: buffers[clip.patternId],
+      }));
+  }, [arrangement, bpm, buffers]);
+
+  // High-performance scheduler
+  useLookaheadScheduler(isPlaying, scheduledNotes);
+
+  // High-performance Visual Playhead (Hardware Synced)
+  const playheadProgress = useSharedValue(0);
+  useFrameCallback(() => {
+    if (isPlaying) {
+        playheadProgress.value = AudioEngine.getInstance().currentTime;
+    } else {
+        // playheadProgress.value = 0; // optional: keep position on pause
+    }
   });
 
-  // Sync Clock with Store
-  useEffect(() => {
-    if (isPlaying) {
-        start();
-    } else {
-        stop();
-        // Optional: reset() if we want to go back to start on stop, 
-        // or keep position for pause. For now, let's pause.
-    }
-  }, [isPlaying, start, stop]);
-
-  // Auto-Scroll Logic
+  // Auto-Scroll Logic (driven by React state for simplicity, or shared value for perf)
+  // For now, let's stick to a useEffect that tracks playheadProgress
+  // Note: we can't directly useEffect on shared values efficiently without useAnimatedReaction
+  // But for scrolling, a low-freq check is fine.
   useEffect(() => {
     if (!isPlaying) return;
 
-    // Calculate Playhead X position
-    const stepWidth = SEQUENCER_CONFIG.BAR_WIDTH / 16;
-    const playheadX = currentStep * stepWidth;
+    const interval = setInterval(() => {
+        const barDuration = (60 / bpm) * 4;
+        const playheadX = (playheadProgress.value / barDuration) * SEQUENCER_CONFIG.BAR_WIDTH;
+        
+        const visibleEnd = scrollX + (SCREEN_WIDTH - SIDEBAR_WIDTH);
+        if (playheadX > visibleEnd - 50) {
+            const newScrollX = playheadX - 50;
+            contentScrollRef.current?.scrollTo({ x: newScrollX, animated: true });
+        }
+    }, 100); // Check every 100ms for auto-scroll
 
-    // Visible Area Calculation
-    const visibleStart = scrollX;
-    const visibleEnd = scrollX + (SCREEN_WIDTH - SIDEBAR_WIDTH);
-
-    // Page Turn: If playhead reaches the end of the visible area
-    if (playheadX > visibleEnd - 50) { // 50px buffer
-       const newScrollX = playheadX - 50;
-       contentScrollRef.current?.scrollTo({ x: newScrollX, animated: true });
-    }
-  }, [currentStep, isPlaying, scrollX]);
+    return () => clearInterval(interval);
+  }, [isPlaying, scrollX, bpm]);
 
   const handleContentScroll = (event: NativeSyntheticEvent<NativeScrollEvent>) => {
     const x = event.nativeEvent.contentOffset.x;
@@ -76,8 +88,9 @@ export const SequencerTimelineView: React.FC = () => {
     rulerScrollRef.current?.scrollTo({ x, animated: false });
   };
 
-  const stepWidth = SEQUENCER_CONFIG.BAR_WIDTH / 16;
-  const playheadLeft = currentStep * stepWidth;
+  // Logic for rendering playhead position in JSX (using Animated.View)
+  const barDuration = (60 / bpm) * 4;
+  const pixelsPerSecond = SEQUENCER_CONFIG.BAR_WIDTH / barDuration;
 
   return (
     <View style={styles.container}>
@@ -102,8 +115,8 @@ export const SequencerTimelineView: React.FC = () => {
             showsHorizontalScrollIndicator={false}
           >
             <TimelineRuler />
-             {/* Playhead in Ruler (Optional, adds nice visual) */}
-             <View style={[styles.playheadRulerMarker, { left: playheadLeft }]} />
+             {/* Playhead in Ruler */}
+             <PlayheadMarker progress={playheadProgress} pixelsPerSecond={pixelsPerSecond} />
           </ScrollView>
         </View>
       </View>
@@ -155,8 +168,7 @@ export const SequencerTimelineView: React.FC = () => {
                })}
 
                {/* Playhead Line */}
-               {/* We render it here so it scrolls with content */}
-               <View style={[styles.playheadLine, { left: playheadLeft }]} />
+               <PlayheadLine progress={playheadProgress} pixelsPerSecond={pixelsPerSecond} />
 
             </View>
           </ScrollView>
@@ -165,6 +177,21 @@ export const SequencerTimelineView: React.FC = () => {
     </View>
   );
 };
+
+const PlayheadMarker: React.FC<{ progress: any, pixelsPerSecond: number }> = ({ progress, pixelsPerSecond }) => {
+    const animatedStyle = useAnimatedStyle(() => ({
+        left: progress.value * pixelsPerSecond,
+    }));
+    return <Animated.View style={[styles.playheadRulerMarker, animatedStyle]} />;
+};
+
+const PlayheadLine: React.FC<{ progress: any, pixelsPerSecond: number }> = ({ progress, pixelsPerSecond }) => {
+    const animatedStyle = useAnimatedStyle(() => ({
+        left: progress.value * pixelsPerSecond,
+    }));
+    return <Animated.View style={[styles.playheadLine, animatedStyle]} />;
+};
+
 
 const styles = StyleSheet.create({
   container: {

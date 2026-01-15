@@ -29,7 +29,7 @@
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Loop Board Migration' (Protocol in workflow.md)
 
 ## Phase 3: Sequencer & Lookahead Scheduler
-- [ ] **Task 5: Implement Lookahead Scheduler**
+- [~] **Task 5: Implement Lookahead Scheduler**
     - Create `useLookaheadScheduler` hook.
     - Implement the "Tale of Two Clocks" pattern: JS interval (25ms) feeding the Native Audio Clock (100ms window).
     - *Test:* Verify sequencer events are scheduled ahead of time and play at exact sample offsets.
