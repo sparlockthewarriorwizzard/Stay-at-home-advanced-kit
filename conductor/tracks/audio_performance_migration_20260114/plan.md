@@ -28,16 +28,16 @@
     - *Test:* Verify touch-to-sound latency is perceptibly lower than `expo-av`.
 - [x] Task: Conductor - User Manual Verification 'Phase 2: Loop Board Migration' (Protocol in workflow.md)
 
-## Phase 3: Sequencer & Lookahead Scheduler
-- [~] **Task 5: Implement Lookahead Scheduler**
+## Phase 3: Sequencer & Lookahead Scheduler [checkpoint: 61afeaf]
+- [x] **Task 5: Implement Lookahead Scheduler**
     - Create `useLookaheadScheduler` hook.
     - Implement the "Tale of Two Clocks" pattern: JS interval (25ms) feeding the Native Audio Clock (100ms window).
     - *Test:* Verify sequencer events are scheduled ahead of time and play at exact sample offsets.
-- [ ] **Task 6: Refactor `SequencerTimelineView`**
+- [x] **Task 6: Refactor `SequencerTimelineView`**
     - Connect the timeline playhead to `audioContext.currentTime`.
     - Ensure clip playback is driven by the lookahead scheduler.
     - *Test:* Long-running sync test (3+ minutes) to ensure zero drift between visual playhead and audio.
-- [ ] Task: Conductor - User Manual Verification 'Phase 3: Sequencer & Lookahead Scheduler' (Protocol in workflow.md)
+- [x] Task: Conductor - User Manual Verification 'Phase 3: Sequencer & Lookahead Scheduler' (Protocol in workflow.md)
 
 ## Phase 4: Vocal Overdub & Alignment
 - [ ] **Task 7: Refactor `VocalOverdubScreen`**
