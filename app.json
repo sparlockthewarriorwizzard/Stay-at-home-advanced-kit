@@ -29,7 +29,27 @@
     },
     "plugins": [
       "expo-font",
-      "expo-asset"
+      "expo-asset",
+      "expo-dev-client",
+      [
+        "expo-build-properties",
+        {
+          "android": {
+            "newArchEnabled": true,
+            "extraManifestElements": [
+               {
+                 "name": "application",
+                 "attributes": {
+                   "android:largeHeap": "true"
+                 }
+               }
+            ]
+          },
+          "ios": {
+            "newArchEnabled": true
+          }
+        }
+      ]
     ],
     "extra": {
       "eas": {

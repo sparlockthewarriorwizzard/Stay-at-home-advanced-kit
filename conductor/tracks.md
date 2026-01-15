@@ -34,3 +34,8 @@ This file tracks all major tracks for the project. Each track has its own detail
 ## [x] Track: Implement Linear Sequencer Timeline ('Seq' View)
 *Link: [./conductor/tracks/sequencer_timeline_20260114/](./conductor/tracks/sequencer_timeline_20260114/)*
 *Note: New track based on screenshare spec. Implements the horizontal arrangement view.*
+
+---
+
+## [~] Track: High-Performance Audio Migration
+*Link: [./conductor/tracks/audio_performance_migration_20260114/](./conductor/tracks/audio_performance_migration_20260114/)*
