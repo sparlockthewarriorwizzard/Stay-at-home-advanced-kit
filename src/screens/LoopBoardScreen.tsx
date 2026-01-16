@@ -4,7 +4,6 @@ import {
   Text,
   StyleSheet,
   TouchableOpacity,
-  ScrollView,
   StatusBar,
 } from 'react-native';
 import { useFrameCallback } from 'react-native-reanimated';
@@ -19,12 +18,13 @@ import NativeLoopEngine from '../modules/loop-board/NativeLoopEngine';
 import { SequencerTimelineView } from '../modules/sequencer-timeline/SequencerTimelineView';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
 import { TRACK_DEFINITIONS } from '../types/MusicTypes';
+import { AudioEngine } from '../modules/audio-engine/AudioEngine';
 
 type Props = NativeStackScreenProps<RootStackParamList, 'LoopBoard'>;
 
-const VARIATIONS = ['Fallen', 'Eventual', 'Hunted', 'Glittering'];
+const VARIATIONS = ['Fallen', 'Eventual', 'Hunted'];
 
-const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
+const LoopBoardScreen: React.FC<Props> = ({ navigation, route: _route }) => {
   const { toggleLoop, isPlaying, setPlaying, tickQuantization, bpm, setBuffers } = useLoopStore(
     useShallow((state) => ({
       toggleLoop: state.toggleLoop,
@@ -35,7 +35,7 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
       setBuffers: state.setBuffers,
     }))
   );
-  const [isReady, setIsReady] = useState(false);
+  const [_isReady, setIsReady] = useState(false);
   const [activeView, setActiveView] = useState<'LOOP' | 'SEQ' | 'DRUM' | 'SONG'>('LOOP');
 
   useEffect(() => {
@@ -49,7 +49,7 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
     return () => {
         NativeLoopEngine.getInstance().stopAll();
     };
-  }, []);
+  }, [setBuffers]);
 
   // Precise Quantization Clock driven by hardware
   const lastBarRef = useRef(-1);
@@ -112,7 +112,7 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
 
       {/* View Switcher Tabs */}
       <View style={styles.tabs}>
-        {['LOOP', 'SEQ', 'DRUM', 'SONG'].map((tab, i) => (
+        {['LOOP', 'SEQ', 'DRUM', 'SONG'].map((tab) => (
           <TouchableOpacity 
             key={tab} 
             style={styles.tab}
@@ -151,7 +151,6 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
                 </View>
               ))}
             </View>
-          </View>
         ) : activeView === 'SEQ' ? (
           <SequencerTimelineView />
         ) : (
@@ -159,6 +158,7 @@ const LoopBoardScreen: React.FC<Props> = ({ navigation, route }) => {
              <Text style={{color: '#666'}}>Coming Soon</Text>
           </View>
         )}
+      </View>
       </View>
 
       {/* Footer Nav - Removed */}

@@ -24,8 +24,9 @@ export class AudioEngine {
   public async loadBuffer(uri: string): Promise<AudioBuffer> {
     try {
       // Read file as Base64 string
+      const encoding = FileSystem.EncodingType?.Base64 || 'base64';
       const base64 = await FileSystem.readAsStringAsync(uri, {
-        encoding: FileSystem.EncodingType.Base64,
+        encoding,
       });
 
       // Convert to ArrayBuffer

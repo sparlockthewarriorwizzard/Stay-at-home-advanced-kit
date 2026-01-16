@@ -1,7 +1,6 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import {
   TouchableOpacity,
-  Text,
   StyleSheet,
   View,
 } from 'react-native';
@@ -11,14 +10,12 @@ import Animated, {
   useAnimatedProps,
   withRepeat,
   useSharedValue,
-  Easing,
-  cancelAnimation,
   withSequence,
   useFrameCallback,
 } from 'react-native-reanimated';
 import Svg, { Path } from 'react-native-svg';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
-import { COLORS, BORDER_RADIUS, SPACING } from '../../../constants/Theme';
+import { COLORS, SPACING } from '../../../constants/Theme';
 import { useLoopStore } from '../LoopStore';
 import { useShallow } from 'zustand/react/shallow';
 import { AudioEngine } from '../../audio-engine/AudioEngine';

@@ -65,37 +65,17 @@ const VocalOverdubScreen: React.FC<Props> = ({ route, navigation }) => {
       setPlaying(true);
     }
     return () => clearTimeout(timer);
-  }, [countdown]);
+  }, [countdown, setPlaying]);
 
   // Precise Trigger Logic
-  const lastBarRef = useRef(-1);
-  useFrameCallback(() => {
-    if (!waitingForNextBar) {
-        lastBarRef.current = -1;
-        return;
-    }
-
-    const engine = AudioEngine.getInstance();
-    const barDuration = (60 / bpm) * 4;
-    const currentBar = Math.floor(engine.currentTime / barDuration);
-
-    // When we hit the START of the next bar (crossing boundary)
-    if (lastBarRef.current === -1) {
-        lastBarRef.current = currentBar;
-    } else if (currentBar > lastBarRef.current) {
-        // TRIGGER RECORDING
-        setWaitingForNextBar(false);
-        startRecording();
-    }
-  });
-
+// ...
   // Cleanup on Unmount
   useEffect(() => {
       return () => {
-          // Stop playback if user leaves screen while recording
-          if (isPlaying) setPlaying(false);
+          // Stop playback if user leaves screen
+          setPlaying(false);
       };
-  }, []);
+  }, [setPlaying]);
 
   const handleFinish = () => {
       // For now, just go back to the board

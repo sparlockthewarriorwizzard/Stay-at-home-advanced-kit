@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { useSharedValue, useFrameCallback } from 'react-native-reanimated';
 import { AudioEngine } from './AudioEngine';
 

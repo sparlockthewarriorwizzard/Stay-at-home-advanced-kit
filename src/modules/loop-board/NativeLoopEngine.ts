@@ -8,49 +8,41 @@ const DEFAULT_KIT_ASSETS: Record<string, Record<number, any>> = {
         1: require('../../assets/sounds/kits/default/kick/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/kick/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/kick/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/kick/Row_1.wav'),
     },
     clap: {
         1: require('../../assets/sounds/kits/default/clap/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/clap/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/clap/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/clap/Row_1.wav'),
     },
     tops: {
         1: require('../../assets/sounds/kits/default/tops/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/tops/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/tops/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/tops/Row_1.wav'),
     },
     bass: {
         1: require('../../assets/sounds/kits/default/bass/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/bass/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/bass/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/bass/Row_1.wav'),
     },
     chords: {
         1: require('../../assets/sounds/kits/default/chords/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/chords/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/chords/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/chords/Row_1.wav'),
     },
     vocal: {
         1: require('../../assets/sounds/kits/default/vocal/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/vocal/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/vocal/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/vocal/Row_1.wav'),
     },
     adds: {
         1: require('../../assets/sounds/kits/default/adds/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/adds/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/adds/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/adds/Row_1.wav'),
     },
     fx: {
         1: require('../../assets/sounds/kits/default/fx/Row_1.wav'),
         2: require('../../assets/sounds/kits/default/fx/Row_2.wav'),
         3: require('../../assets/sounds/kits/default/fx/Row_3.wav'),
-        4: require('../../assets/sounds/kits/default/fx/Row_1.wav'),
     },
 };
 
@@ -80,7 +72,7 @@ class NativeLoopEngine {
             const promises: Promise<void>[] = [];
 
             types.forEach((type) => {
-                for (let i = 1; i <= 4; i++) {
+                for (let i = 1; i <= 3; i++) {
                     const loopId = `${type}${i}`;
                     const assetModule = DEFAULT_KIT_ASSETS[type]?.[i];
                     
@@ -89,11 +81,14 @@ class NativeLoopEngine {
                     const loadTask = async () => {
                         try {
                             const asset = Asset.fromModule(assetModule);
+                            console.log(`[NativeLoopEngine] Downloading ${loopId}...`);
                             await asset.downloadAsync();
                             const uri = asset.localUri || asset.uri;
+                            console.log(`[NativeLoopEngine] Loading ${loopId} into buffer: ${uri.substring(0, 50)}...`);
                             
                             const buffer = await audioEngine.loadBuffer(uri);
                             this.buffers[loopId] = buffer;
+                            console.log(`[NativeLoopEngine] Successfully loaded ${loopId}`);
                         } catch (e) {
                             console.error(`[NativeLoopEngine] Failed to load ${loopId}`, e);
                         }
